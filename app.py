@@ -1,40 +1,26 @@
-# impot libraries
-# Dash components, html, io, and objects
+# Dash components, html, and io
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-# import plotly.express as px
+# Plotly graph objects to render graph plots
 import plotly.graph_objects as go
-# Pandas for data ETL
+# Import Pandas
 import pandas as pd
 
+# Import custom data.py
+import data
 
-# Instantiae app with dash
+# Instantiate app with dash
 app = dash.Dash(__name__)
+
 # Title of applicaiton
 app.title = 'MLB Historical Data Visualization'
 
-# Use pandas to import CSV data
-teams_df = pd.read_csv('data/team.csv')
-
-# Create a dict of a string pair that is for a list of Teams to be selected from
-# Dash components require each item in the list to be defined as:
-# {'label': 'TEAM NAME', 'value': 'TEAM NAME'}
-# Grab a list unique team names from the main dataframe
-team_names = teams_df['name'].unique()
-# Dict to be used for string pair
-team_dic={}
-# List to be used to be filled with dict
-team_dic_list=[]
-# loop through the team name list
-for i in range(len(team_names)):
-    # Create a entry with a label of 'label'
-    team_dic['label'] = team_names[i]
-    # Create a second entry with label of 'value'
-    team_dic['value'] = team_names[i]
-    # Append list with dict entry of string pair
-    team_dic_list.append(team_dic.copy())
+# Import data from data.py file
+teams_df = data.teams
+# Hardcoded list that contain era names
+era_list = data.era_list
 
 
 # Applicaiton layout
@@ -47,16 +33,21 @@ app.layout = html.Div([
 
     # Menu DIV, contains a dropdown list of Teams, set initial value to 'Boston Americans'
     html.Div([
+        html.H2(children='Select an Era:'),
+        dcc.Dropdown(
+        className = 'era',
+        id='era-dropdown',
+        options=era_list,
+        value=era_list[0]['value'],
+        clearable=False),
+        html.H3(children='All MLB Era\'s between 1903-2015 are represented.'),
         html.H2(children='Select A Team:'),
         dcc.Dropdown(
         className = 'team',
         id='team-dropdown',
-        options=team_dic_list,
-        value='Boston Americans',
-        clearable=False,),
-        html.H3(children='All MLB teams from 1903-2015 are represented.'),
+        clearable=False),
+        html.H3(children='All charts will show data from the selected team of given era.'),
     ],className='slice menu'),
-
 
     # Graphs of Historical Team statistics
     # Bar Chart of Wins and Losses
@@ -82,13 +73,44 @@ app.layout = html.Div([
 ],className='page',)
 
 
+# This is part of a standard callback that will hange the options of the team dropdown
+@app.callback(
+    Output('team-dropdown', 'options'),
+    [Input('era-dropdown', 'value')])
+def select_era(selected_era):
+    # Change into lambda?
+    if (selected_era == era_list[1]['value']):
+        teams = data.dynamicteams(1)
+    elif (selected_era == era_list[2]['value']):
+        teams = data.dynamicteams(2)
+    elif (selected_era == era_list[3]['value']):
+        teams = data.dynamicteams(3)
+    elif (selected_era == era_list[4]['value']):
+        teams = data.dynamicteams(4)
+    elif (selected_era == era_list[5]['value']):
+        teams = data.dynamicteams(5)
+    elif (selected_era == era_list[6]['value']):
+        teams = data.dynamicteams(6)
+    else:
+        teams = data.dynamicteams(0)
+    return teams
+
+
+# The other half of the dropdown callback, this will provide the team dropdown with needed options
+@app.callback(
+    Output('team-dropdown', 'value'),
+    [Input('team-dropdown', 'options')])
+def set_team_value(available_options):
+    return available_options[0]['value']
+
+
 # Callback to a W-L Bar Chart, takes data request from dropdown
 @app.callback(
     Output('wl-bar', 'figure'),
     [Input('team-dropdown', 'value')])
-def update_figure1(selected_year):
+def update_figure1(selected_team):
     # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_year]
+    filter = teams_df[teams_df.name == selected_team]
     # Create Bar Chart figure, Wins and Losses
     fig1 = go.Figure(data=[
         go.Bar(name='Wins', x=filter.year, y=filter.w, marker_color='#004687'),
@@ -104,9 +126,9 @@ def update_figure1(selected_year):
 @app.callback(
     Output('batting-line', 'figure'),
     [Input('team-dropdown', 'value')])
-def update_figure2(selected_year):
+def update_figure2(selected_team):
     # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_year]
+    filter = teams_df[teams_df.name == selected_team]
     # Set a list of years team appear
     YR = filter.year
     # Set lists of team data
@@ -139,9 +161,9 @@ def update_figure2(selected_year):
 @app.callback(
     Output('feild-line', 'figure'),
     [Input('team-dropdown', 'value')])
-def update_figure3(selected_year):
+def update_figure3(selected_team):
     # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_year]
+    filter = teams_df[teams_df.name == selected_team]
     # Create line chart figure using Errors and Double Plays
     fig3 = go.Figure(data=[
             go.Scatter(name='Errors', x=filter.year, y=filter.e, mode='markers', marker=dict(color='#5F259F')),
@@ -157,9 +179,9 @@ def update_figure3(selected_year):
 @app.callback(
     Output('pitch-pie', 'figure'),
     [Input('team-dropdown', 'value')])
-def update_figure4(selected_year):
+def update_figure4(selected_team):
     # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_year]
+    filter = teams_df[teams_df.name == selected_team]
     # Create a list of years the team appear
     YR = filter.year
     # Create lists of team data
@@ -183,9 +205,9 @@ def update_figure4(selected_year):
 @app.callback(
     Output('pitch-bubble', 'figure'),
     [Input('team-dropdown', 'value')])
-def update_figure3(selected_year):
+def update_figure3(selected_team):
     # Create filter dataframe of requested team
-    filter = teams_df[teams_df.name == selected_year]
+    filter = teams_df[teams_df.name == selected_team]
     # Create a list of years the team appear
     YR = filter.year
     # Create lists of team data
