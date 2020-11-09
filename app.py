@@ -35,18 +35,25 @@ app.layout = html.Div([
     html.Div([
         html.H2(children='Select an Era:'),
         dcc.Dropdown(
-        className = 'era',
-        id='era-dropdown',
-        options=era_list,
-        value=era_list[0]['value'],
-        clearable=False),
-        html.H3(children='All MLB Era\'s between 1903-2015 are represented.'),
+            className = 'era',
+            id='era-dropdown',
+            options=era_list,
+            value=era_list[0]['value'],
+            clearable=False),
+        html.H4(children='All MLB Era\'s between 1903-2015 are represented.'),
         html.H2(children='Select A Team:'),
         dcc.Dropdown(
-        className = 'team',
-        id='team-dropdown',
-        clearable=False),
-        html.H3(children='All charts will show data from the selected team of given era.'),
+            className = 'team',
+            id='team-dropdown',
+            clearable=False),
+        html.H4(children='Available teams are updated based on Era selection.'),
+        dcc.RangeSlider(
+            id='era-slider',
+            className='era-slider',
+            min=teams_df['year'].min(),
+            max=teams_df['year'].max(),
+            tooltip={'always_visible': True, 'placement': 'bottom'}),
+        html.H4(children='Adjust slider to desired range.'),
     ],className='slice menu'),
 
     # Graphs of Historical Team statistics
@@ -73,48 +80,61 @@ app.layout = html.Div([
 ],className='page',)
 
 
-# This is part of a standard callback that will hange the options of the team dropdown
+# This will update the team dropdown and the range of the slider
 @app.callback(
-    Output('team-dropdown', 'options'),
+    [Output('team-dropdown', 'options'),
+    Output('team-dropdown', 'value'),
+    Output('era-slider', 'value'),],
     [Input('era-dropdown', 'value')])
 def select_era(selected_era):
-    # Change into lambda?
+    # Change into lambda? May make it unreadable
+    # Check if selected era is equal to the value in the era list
+    # Makes sure that teams and range are set to desired era
     if (selected_era == era_list[1]['value']):
         teams = data.dynamicteams(1)
+        range = data.dynamicrange(1)
     elif (selected_era == era_list[2]['value']):
         teams = data.dynamicteams(2)
+        range = data.dynamicrange(2)
     elif (selected_era == era_list[3]['value']):
         teams = data.dynamicteams(3)
+        range = data.dynamicrange(3)
     elif (selected_era == era_list[4]['value']):
         teams = data.dynamicteams(4)
+        range = data.dynamicrange(4)
     elif (selected_era == era_list[5]['value']):
         teams = data.dynamicteams(5)
+        range = data.dynamicrange(5)
     elif (selected_era == era_list[6]['value']):
         teams = data.dynamicteams(6)
+        range = data.dynamicrange(6)
     else:
         teams = data.dynamicteams(0)
-    return teams
-
-
-# The other half of the dropdown callback, this will provide the team dropdown with needed options
-@app.callback(
-    Output('team-dropdown', 'value'),
-    [Input('team-dropdown', 'options')])
-def set_team_value(available_options):
-    return available_options[0]['value']
+        range = data.dynamicrange(0)
+    # Return team list, the initial value of the team list, and the range in the era
+    return teams, teams[0]['value'], range
 
 
 # Callback to a W-L Bar Chart, takes data request from dropdown
 @app.callback(
     Output('wl-bar', 'figure'),
-    [Input('team-dropdown', 'value')])
-def update_figure1(selected_team):
-    # Create filter dataframe of requested team data
+    [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure1(selected_team, year_range):
     filter = teams_df[teams_df.name == selected_team]
+    # This feels like a hack
+    # Checks if year_range is empty (NonType)
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        # I created this becuase i kept getting NonType errors with all of my graph call backs
+        # Set year range to default position
+        year_range = [1903,1919]
+        # Filter the years of the data to be within range
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
     # Create Bar Chart figure, Wins and Losses
     fig1 = go.Figure(data=[
-        go.Bar(name='Wins', x=filter.year, y=filter.w, marker_color='#004687'),
-        go.Bar(name='Losses', x=filter.year, y=filter.l,  marker_color='#AE8F6F')
+        go.Bar(name='Wins', x=filter_year.year, y=filter_year.w, marker_color='#004687'),
+        go.Bar(name='Losses', x=filter_year.year, y=filter_year.l,  marker_color='#AE8F6F')
     ])
     # Update figure, set hover to the X-Axis and establish title
     fig1.update_layout(hovermode="x",barmode='group',title="Win/Loss Performance")
@@ -125,20 +145,26 @@ def update_figure1(selected_team):
 # Call back to Line Graph, takes data request from dropdown
 @app.callback(
     Output('batting-line', 'figure'),
-    [Input('team-dropdown', 'value')])
-def update_figure2(selected_team):
+    [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure2(selected_team, year_range):
     # Create filter dataframe of requested team data
     filter = teams_df[teams_df.name == selected_team]
+    # This still feels like a hack
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
     # Set a list of years team appear
-    YR = filter.year
+    YR = filter_year.year
     # Set lists of team data
-    AB = filter.ab
-    Ht = filter.h
-    SO = filter.so
-    BB = filter.bb
-    DBL = filter.double
-    TRP = filter.triple
-    HR = filter.hr
+    AB = filter_year.ab
+    Ht = filter_year.h
+    SO = filter_year.so
+    BB = filter_year.bb
+    DBL = filter_year.double
+    TRP = filter_year.triple
+    HR = filter_year.hr
     # Calculate Strikeout Rate
     SOR = SO / AB
     # Calculate BABIP
@@ -147,9 +173,9 @@ def update_figure2(selected_team):
     BAVG = Ht / AB
     # Create Line char figure using Strikeout Rate, BABIP, and Batting Average
     fig2 = go.Figure(data=[
-        go.Scatter(name='Batting Average', x=filter.year, y=BAVG, mode='lines+markers', marker_color='#0C2C56'),
-        go.Scatter(name='Balls (Hits) In Play', x=filter.year, y=BABIP, mode='markers', marker_color='#005C5C'),
-        go.Scatter(name='Strikeout Rate', x=filter.year, y=SOR, mode='markers', marker_color='#D50032'),
+        go.Scatter(name='Batting Average', x=filter_year.year, y=BAVG, mode='lines+markers', marker_color='#0C2C56'),
+        go.Scatter(name='Balls (Hits) In Play', x=filter_year.year, y=BABIP, mode='markers', marker_color='#005C5C'),
+        go.Scatter(name='Strikeout Rate', x=filter_year.year, y=SOR, mode='markers', marker_color='#D50032'),
     ])
     # Update layout, set hover to X-Axis and establish title
     fig2.update_layout(hovermode="x",title="Batting Performance")
@@ -160,14 +186,20 @@ def update_figure2(selected_team):
 # Call back to Line Chart, Takes request data from dropdown menu
 @app.callback(
     Output('feild-line', 'figure'),
-    [Input('team-dropdown', 'value')])
-def update_figure3(selected_team):
+    [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure3(selected_team, year_range):
     # Create filter dataframe of requested team data
     filter = teams_df[teams_df.name == selected_team]
+    # Im pretty sure this is a hack, there has to be a different approch
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
     # Create line chart figure using Errors and Double Plays
     fig3 = go.Figure(data=[
-            go.Scatter(name='Errors', x=filter.year, y=filter.e, mode='markers', marker=dict(color='#5F259F')),
-            go.Scatter(name='Double Plays', x=filter.year, y=filter.dp, mode='lines+markers', marker=dict(color='#005F61')),
+            go.Scatter(name='Errors', x=filter_year.year, y=filter_year.e, mode='markers', marker=dict(color='#5F259F')),
+            go.Scatter(name='Double Plays', x=filter_year.year, y=filter_year.dp, mode='lines+markers', marker=dict(color='#005F61')),
     ])
     # Update Layout, set hover to X-Axis and establish title
     fig3.update_layout(hovermode="x",title="Feilding Performance")
@@ -178,17 +210,27 @@ def update_figure3(selected_team):
 # Call back to Pie Chart, takes data request from dropdown menu
 @app.callback(
     Output('pitch-pie', 'figure'),
-    [Input('team-dropdown', 'value')])
-def update_figure4(selected_team):
+    [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure4(selected_team, year_range):
     # Create filter dataframe of requested team data
     filter = teams_df[teams_df.name == selected_team]
+    # IDK what to say, this is needed untill i can fix it.
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
     # Create a list of years the team appear
-    YR = filter.year
+    YR = filter_year.year
     # Create lists of team data
-    G = filter.g.sum()
-    CG = filter.cg.sum() / G
-    SHO = filter.sho.sum() / G
-    SV = filter.sv.sum() / G
+    # Prevents a RuntimeError: invalid value encountered in longlong_scalars
+    if (filter_year.g.sum() == 0):
+        G = 1
+    else:
+        G = filter_year.g.sum()
+    CG = filter_year.cg.sum() / G
+    SHO = filter_year.sho.sum() / G
+    SV = filter_year.sv.sum() / G
     # Set each list into a list (embedded list)
     PCT = [CG, SHO, SV]
     # Create Pie chart figure of Complete games, Shutouts, and saves
@@ -204,16 +246,22 @@ def update_figure4(selected_team):
 # Call back to Line Bubble Chart, take data request from dropdown menu
 @app.callback(
     Output('pitch-bubble', 'figure'),
-    [Input('team-dropdown', 'value')])
-def update_figure3(selected_team):
+    [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure3(selected_team, year_range):
     # Create filter dataframe of requested team
     filter = teams_df[teams_df.name == selected_team]
+    # I will revisit this again soon, it just doesnt seem efficient
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
     # Create a list of years the team appear
-    YR = filter.year
+    YR = filter_year.year
     # Create lists of team data
-    ERA = filter.era
-    SOA = filter.soa
-    BBA = filter.bba
+    ERA = filter_year.era
+    SOA = filter_year.soa
+    BBA = filter_year.bba
     # Calculate K/BB ratio
     RATIO = SOA / BBA
     # Create line chart of K/BB ratio with ERA used for bubble size
