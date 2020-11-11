@@ -7,6 +7,7 @@ The applicaiton breaks down each baseballs teams win/loss performance over the t
 ## Dependencies
 - Dash 1.14
 - Pandas 1.1
+- Numpy 1.19.1
 
 ## The Data
 The data was retrieved from Kaggel and was created by code at https://github.com/benhamner/baseball. It is a processed version of the 2015 data at www.seanlahman.com/baseball-archive/statistics/. The original database was copyright 1996-2015 by Sean Lahman and licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License. For details see: http://creativecommons.org/licenses/by-sa/3.0/
