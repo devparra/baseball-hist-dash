@@ -5,6 +5,7 @@ This application is built using Plotly Dash. The app takes historical MLB (Major
 The applicaiton breaks down each baseballs teams win/loss performance within a range of the teams history. Additionally, I break down the batting performance with the team batting average, BABIP, and strikeout rate. I also broke down the piching perfomance using the teams ERA and strikeout to walk ratio. Finally the feilding performance of each team is illustrated with total errors and double plays. The graphs are designed with a single CSV file queried with Pandas.
 
 ## Dependencies
+- Python 3.8+
 - Dash 1.14
 - Pandas 1.1
 - Numpy 1.19.1
