@@ -41,7 +41,7 @@
 .menu {
   /* Navajo White */
   background-color: #FFDEAD;
-  height: 220px;
+  height: 280px;
   flex-direction: column;
 }
 
@@ -54,7 +54,7 @@
   text-align: center;
   margin: auto;
   font-size: 18px;
-  width: 170px;
+  width: 220px;
 }
 
 .team {
@@ -64,8 +64,13 @@
   width: 290px;
 }
 
+.era-slider {
+  width: 90%;
+  /* position: absolute;  */
+}
 
-.menu h3 {
+
+.menu h4 {
   margin-top: 5px;
   margin-bottom: 10px;
   opacity: 50%;
