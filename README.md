@@ -14,4 +14,4 @@ The applicaiton breaks down each baseballs teams win/loss performance within a r
 ## The Data
 The data was retrieved from Kaggel and was created by code at https://github.com/benhamner/baseball. It is a processed version of the 2015 data at www.seanlahman.com/baseball-archive/statistics/. The original database was copyright 1996-2015 by Sean Lahman and licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License. For details see: http://creativecommons.org/licenses/by-sa/3.0/
 
-/* *Applicaiton feature is recently added and still under construction 
+* *Applicaiton feature is recently added and still under construction*
