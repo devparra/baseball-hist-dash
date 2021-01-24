@@ -1,35 +1,31 @@
-# Import pandas
+# Import bootstrap, dash-html, pandas
+import dash_bootstrap_components as dbc
+import dash_html_components as html
 import pandas as pd
-import numpy as np
 
 # Import CSV data
 teams = pd.read_csv('data/team.csv')
+batters = pd.read_csv('data/batting.csv')
 
 # Hardcoded list of era names as key value pairs
 era_list = [{'label': 'Dead Ball (\'03-\'19)','value': 'Dead Ball'},
             {'label': 'Live Ball (\'20-\'41)','value': 'Live Ball'},
             {'label': 'Integration (\'42-\'60)','value': 'Integration'},
             {'label': 'Expantion (\'61-\'76)','value': 'Expantion'},
-            {'label': 'Free Agency (\'71-\'93)','value': 'Free Agency'},
+            {'label': 'Free Agency (\'77-\'93)','value': 'Free Agency'},
             {'label': 'Steroid (\'94-\'05)','value': 'Steroid'},
             {'label': 'Post-Steroid (\'06-\'15)','value': 'Post-Steroid'}]
 
-
-# Creates a list of key value pairs in the format:
-# [{'label': <LABLE>, 'value': <VALUE>}]
-def listpair(new):
-    # Establish empty dictionary and list
-    _dict={}
-    _dict_list=[]
-    # set loop to iterate input list
-    for i in range(len(new)):
-        # assign lable and value in dictionary
-        _dict['label'] = new[i]
-        _dict['value'] = new[i]
-        # add pair to list
-        _dict_list.append(_dict.copy())
-    # return a list of key value pairs
-    return _dict_list
+era_marks = {
+                1903: {'label': '1903'},
+                1919: {'label': '1919'},
+                1941: {'label': '1941'},
+                1960: {'label': '1960'},
+                1976: {'label': '1976'},
+                1993: {'label': '1993'},
+                2005: {'label': '2005'},
+                2015: {'label': '2015'},
+            }
 
 
 # Creates a dynamic list of team names based on era
@@ -49,8 +45,10 @@ def dynamicteams(x):
     # filter_year = filter_year[] # Low Year
     # Create a filter list of Team names based on years filtered
     filter_teams = filter_year['name'].unique()
-    # return unique list of team names as a list of key value pairs
-    return listpair(filter_teams)
+    # return unique list of team names as a list of key value pairs, rather than calling a function to create and return the list
+    # list comp of key value pair
+    # new is a list of names while x is the name in the list
+    return [{'label': x, 'value': x} for x in filter_teams]
 
 
 def dynamicrange(x):
@@ -62,5 +60,4 @@ def dynamicrange(x):
                 (1977,1993),
                 (1994,2005),
                 (2006,2015)]
-    filter_range = [era_time[x][0],era_time[x][1]]
-    return filter_range
+    return [era_time[x][0],era_time[x][1]]
