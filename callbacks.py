@@ -239,23 +239,23 @@ def update_table(selected_team, year_range):
 
 
 # callback to data-table of player batting performance
-# NOTE: this callback will need to be updated to reflect proper year span (Era)
 @app.callback(
     [Output('batterTable', 'data'),Output('batterTable','columns')],
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_batter_table(selected_team, year_range):
     # Create filter dataframe of requested team
     filter = teams_df[teams_df.name == selected_team]
-    # I will revisit this again soon, it just doesnt seem efficient
-    if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
-    else:
-        # year_range = [1903,1919]
-        filter_year = filter[( filter.year >= 1903 )&( filter.year <= 1919 )]
-    # obtain team id from filter
-    id = filter_year.team_id
-    # apply filtered team id to batters dataframe
+    # Select team id from filter
+    id = filter.team_id
+    # Apply filter team id to batters dataframe
     Batters = batter_df[batter_df.team_id == id.iloc[0]]
 
-    # returns batters dataframe as dictionary and returns a key value pair for column headers
-    return Batters.to_dict('records'), [{'name': x, 'id': x} for x in Batters]
+    # Set year range
+    # I will revisit this again soon, it just doesnt seem efficient
+    if year_range:
+        Data = Batters[( Batters.year >= year_range[0] )&( Batters.year <= year_range[1] )]
+    else:
+        Data = Batters[( Batters.year >= 1903 )&( Batters.year <= 1919 )]
+
+    # Return batters dictionary to data and batters key value pair to columns
+    return Data.to_dict('records'), [{'name': x, 'id': x} for x in Data]
