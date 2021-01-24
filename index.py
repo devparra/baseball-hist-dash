@@ -53,11 +53,21 @@ footer = html.Footer([dcc.Markdown('''
 def display_page(pathname):
     if pathname == '/':
         return html.Div([dcc.Markdown('''
-            This application is a portfolio project built using Plotly's Dash. This applicaiton takes historical
-            MLB (Major League Baseball) data and provides visualizations for teams and player statistics dating
-            from 1903 to 2015. Selecting from a dropdown menu, the era will update the list of available
-            teams and players in the range set on the years slider. The slider allows the user to adjust the range
-            of years with wich the data shows.
+            ### The Applicaiton
+            This application is a portfolio project built using Plotly's Dash, Dash Bootstrap Components, Pandas, and Numpy.
+            Taking historical MLB (Major League Baseball) data, this application provides visualizations for teams and player
+            statistics dating from 1903 to 2015. Selecting from a dropdown menu, the era will update the list of available
+            teams and players in the range set on the years slider. The slider allows the user to adjust the range of years
+            with wich the data shows.
+
+            ### The Analysis
+            The applicaiton breaks down each baseballs teams win/loss performance within a range of the teams history.
+            Additionally, the app will break down the batting performance with the team batting average, BABIP, and strikeout
+            rate. I also broke down the piching perfomance using the teams ERA and strikeout to walk ratio. Finally the feilding
+            performance of each team is illustrated with total errors and double plays. \*The applicaiton will also breakdown
+            each of teams players statistics within the given era.
+
+            \* *Applicaiton feature is recently added and still under construction*
         ''')],className='home')
     elif pathname == '/team':
         return appMenu, teamLayout
