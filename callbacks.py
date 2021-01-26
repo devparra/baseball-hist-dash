@@ -231,11 +231,30 @@ def update_table(selected_team, year_range):
         # year_range = [1903,1919]
         filter_year = filter[( filter.year >= 1903 )&( filter.year <= 1919 )]
 
+    # remove unneccesary columns
+    # only want accolades
     Data = filter_year.drop(columns=['team_id', 'g', 'w', 'l', 'r', 'ab', 'h', 'double', 'triple',
         'hr', 'bb', 'so', 'sb', 'cs', 'era', 'cg', 'sho', 'sv', 'ha', 'hra', 'bba', 'soa', 'e', 'dp',
         'fp', 'name', 'park'])
 
-    return Data.to_dict('records'), [{'name': x, 'id': x} for x in Data]
+    # Check if the team won a world series
+    WIN = Data[Data.ws_win == 'Y']
+
+    # if empty, no world series won
+    if WIN.empty:
+        # Check if the team won a wild card, will only apply to teams in the 2000s
+        WIN = Data[Data.wc_win == 'Y']
+        # if empty, no wild cards won
+        if WIN.empty:
+            # Check if the team won a division series, lowest level of championship in MLB
+            WIN = Data[Data.div_win == 'Y']
+            # if the team won a division but no league title the data will still show
+            # if the team won the league by winning a wild card but not world series, the data
+            # will still show
+            # it stands to reason that if any championship is won, the data will reflect in the datatable
+
+    # return win as dictionary to data and the key value pair to the columns
+    return WIN.to_dict('records'), [{'name': x, 'id': x} for x in WIN]
 
 
 # callback to data-table of player batting performance
