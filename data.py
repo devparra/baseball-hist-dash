@@ -6,6 +6,7 @@ import pandas as pd
 # Import CSV data
 teams = pd.read_csv('data/team.csv')
 batters = pd.read_csv('data/batting.csv')
+players = pd.read_csv('data/player.csv')
 
 # Hardcoded list of era names as key value pairs
 era_list = [{'label': 'Dead Ball (\'03-\'19)','value': 'Dead Ball'},

@@ -42,8 +42,14 @@
   text-align: center;
   margin: auto;
   font-size: 18px;
-  width: 290px;
+  width: 300px;
 }
+
+.player {
+  width: 250px;
+  padding: 1%;
+}
+
 /* end of Menu styles */
 
 

@@ -71,16 +71,36 @@ teamLayout = html.Div([
     dcc.Graph(className = 'slice feature2', id='pitch-pie', config={'displayModeBar': False}),
 ])
 
-# player layout
-playerLayout = html.Div([dash_table.DataTable(
-            id='batterTable',
-            style_as_list_view=True,
-            style_header={
-                    'backgroundColor': '#f8f5f0',
-                    'fontWeight': 'bold'
-                },
-            style_cell={
-                    'textAlign': 'center',
-                    'padding': '8px',
-                },
-        )],className = 'slice feature')
+# Player layout, player data and profile
+playerLayout = html.Div([
+    dcc.Dropdown(
+        className = 'player',
+        id='player-dropdown',
+        clearable=False
+    ),
+    dash_table.DataTable(
+        id='playerProfile',
+        style_as_list_view=True,
+        # style_table={'width': '50%','margin-left': 'auto', 'margin-right': 'auto'},
+        style_header={
+                'backgroundColor': '#f8f5f0',
+                'fontWeight': 'bold'
+            },
+        style_cell={
+                'textAlign': 'center',
+                'padding': '8px',
+            },
+    ),
+    dash_table.DataTable(
+        id='batterTable',
+        style_as_list_view=True,
+        # style_table={'width': '50%','margin-left': 'auto', 'margin-right': 'auto'},
+        style_header={
+                'backgroundColor': '#f8f5f0',
+                'fontWeight': 'bold'
+            },
+        style_cell={
+                'textAlign': 'center',
+                'padding': '8px',
+            },
+)],className = 'slice feature app-page') # added app-page css

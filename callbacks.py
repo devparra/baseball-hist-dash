@@ -3,6 +3,8 @@ from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 # import app
 from app import app
+# import pandas
+import pandas as pd
 
 # Import custom data.py
 import data
@@ -12,6 +14,8 @@ teams_df = data.teams
 era_list = data.era_list
 # Batters data
 batter_df = data.batters
+# Player Profiles data
+player_df = data.players
 
 
 # This will update the team dropdown and the range of the slider
@@ -257,24 +261,71 @@ def update_table(selected_team, year_range):
     return WIN.to_dict('records'), [{'name': x, 'id': x} for x in WIN]
 
 
-# callback to data-table of player batting performance
 @app.callback(
-    [Output('batterTable', 'data'),Output('batterTable','columns')],
+    [Output('player-dropdown', 'options'), Output('player-dropdown', 'value')],
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
-def update_batter_table(selected_team, year_range):
+def update_player_dropdown(selected_team, year_range):
     # Create filter dataframe of requested team
-    filter = teams_df[teams_df.name == selected_team]
+    filter_team = teams_df[teams_df.name == selected_team]
     # Select team id from filter
-    id = filter.team_id
     # Apply filter team id to batters dataframe
-    Batters = batter_df[batter_df.team_id == id.iloc[0]]
+    batters = batter_df[batter_df.team_id == filter_team.team_id.iloc[0]]
 
     # Set year range
     # I will revisit this again soon, it just doesnt seem efficient
     if year_range:
-        Data = Batters[( Batters.year >= year_range[0] )&( Batters.year <= year_range[1] )]
+        data = batters[( batters.year >= year_range[0] )&( batters.year <= year_range[1] )]
     else:
-        Data = Batters[( Batters.year >= 1903 )&( Batters.year <= 1919 )]
+        data = batters[( batters.year >= 1903 )&( batters.year <= 1919 )]
+
+    # set a series of player id
+    names = data.player_id
+
+    # merge player id series with player dataframe (profiles)
+    players_mer = pd.merge(names, player_df, how='left', on='player_id')
+
+    # concatenate first and last name
+    players_mer['known_name'] = players_mer['name_first'] + " " + players_mer['name_last']
+
+    # set list of given names of each ball player
+    known = players_mer.known_name.to_list()
+
+    # use given names list to set a key value pair for dropdown
+    names = [{'label': x, 'value': x} for x in known]
+
+    # Return given name key value pair to options and value of dropdown
+    return names, names[0]['value']
+
+
+@app.callback(
+    [Output('batterTable', 'data'),Output('batterTable','columns')],
+    [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),
+    Input('era-slider', 'value')])
+def update_batter_table(player, selected_team, year_range):
+    # take in the selected team
+    filter_team = teams_df[teams_df.name == selected_team]
+    # Select team id from filter
+    T_id = filter_team.team_id
+
+    player_df['known_name'] = player_df['name_first'] + " " + player_df['name_last']
+
+    # Create player filter with selected player
+    filter_player = player_df[player_df.known_name == player]
+    # Select player id from filter
+    P_id = filter_player.player_id
+
+    # Apply filter player and team id to batters dataframe
+    batters = batter_df[(batter_df.player_id == P_id.iloc[0])&(batter_df.team_id == T_id.iloc[0])]
+
+    # Set year range
+    # I will revisit this again soon, it just doesnt seem efficient
+    if year_range:
+        data = batters[( batters.year >= year_range[0] )&( batters.year <= year_range[1] )]
+    else:
+        data = batters[( batters.year >= 1903 )&( batters.year <= 1919 )]
+
+    # drop unneccesary columns
+    data_filter = data.drop(columns=['player_id', 'stint', 'team_id', 'league_id'])
 
     # Return batters dictionary to data and batters key value pair to columns
-    return Data.to_dict('records'), [{'name': x, 'id': x} for x in Data]
+    return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
