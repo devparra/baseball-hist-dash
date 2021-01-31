@@ -81,7 +81,6 @@ playerLayout = html.Div([
     dash_table.DataTable(
         id='playerProfile',
         style_as_list_view=True,
-        # style_table={'width': '50%','margin-left': 'auto', 'margin-right': 'auto'},
         style_header={
                 'backgroundColor': '#f8f5f0',
                 'fontWeight': 'bold'
@@ -94,7 +93,6 @@ playerLayout = html.Div([
     dash_table.DataTable(
         id='batterTable',
         style_as_list_view=True,
-        # style_table={'width': '50%','margin-left': 'auto', 'margin-right': 'auto'},
         style_header={
                 'backgroundColor': '#f8f5f0',
                 'fontWeight': 'bold'

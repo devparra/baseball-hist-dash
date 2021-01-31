@@ -40,16 +40,15 @@ def dynamicteams(x):
                 (1994,2005),
                 (2006,2015)]
     # create a filter list of just years and team names
-    filter_team_yr = teams[['year','name']]
+    filter_team_yr = teams[['year','name','team_id']]
     # filter the above list by year span
     filter_year = filter_team_yr[(filter_team_yr.year >= era_time[x][0])&(filter_team_yr.year <= era_time[x][1])] # High Year
     # filter_year = filter_year[] # Low Year
-    # Create a filter list of Team names based on years filtered
+    # Create a filter list of Team names and ids based on years filter
     filter_teams = filter_year['name'].unique()
-    # return unique list of team names as a list of key value pairs, rather than calling a function to create and return the list
-    # list comp of key value pair
-    # new is a list of names while x is the name in the list
-    return [{'label': x, 'value': x} for x in filter_teams]
+    filter_team_ids = filter_year['team_id'].unique()
+    # return unique list of team names and ids as a list of key value pairs
+    return [{'label': k, 'value': v }for k, v in zip(filter_teams, filter_team_ids)]
 
 
 def dynamicrange(x):

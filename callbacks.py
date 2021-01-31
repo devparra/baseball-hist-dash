@@ -58,17 +58,17 @@ def select_era(selected_era):
     Output('wl-bar', 'figure'),
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_figure1(selected_team, year_range):
-    filter = teams_df[teams_df.name == selected_team]
+    filter_team = teams_df[teams_df.team_id == selected_team]
     # This feels like a hack
     # Checks if year_range is empty (NonType)
     if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter_team[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     else:
-        # I created this becuase i kept getting NonType errors with all of my graph call backs
+        # I created this becuase i kept getting NonType errors with all of my graph callbacks
         # Set year range to default position
         year_range = [1903,1919]
         # Filter the years of the data to be within range
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     # Create Bar Chart figure, Wins and Losses
     fig1 = go.Figure(data=[
         go.Bar(name='Wins', x=filter_year.year, y=filter_year.w, marker_color='#004687'),
@@ -86,14 +86,15 @@ def update_figure1(selected_team, year_range):
     Output('batting-line', 'figure'),
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_figure2(selected_team, year_range):
-    # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_team]
+    filter_team = teams_df[teams_df.team_id == selected_team]
     # This still feels like a hack
     if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter_team[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     else:
+        # Default range position
         year_range = [1903,1919]
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        # Filter the years of the data to be within range
+        filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     # Set a list of years team appear
     YR = filter_year.year
     # Set lists of team data
@@ -129,13 +130,14 @@ def update_figure2(selected_team, year_range):
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_figure3(selected_team, year_range):
     # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_team]
-    # Im pretty sure this is a hack, there has to be a different approch
+    filter_team = teams_df[teams_df.team_id == selected_team]
+    # Im pretty sure this is a hack, there doesn't seem to be a different approch
     if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter_team[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     else:
         year_range = [1903,1919]
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        # Filter the years of the data to be within range
+        filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     # Create line chart figure using Errors and Double Plays
     fig3 = go.Figure(data=[
             go.Scatter(name='Errors', x=filter_year.year, y=filter_year.e, mode='markers', marker=dict(color='#5F259F')),
@@ -154,13 +156,14 @@ def update_figure3(selected_team, year_range):
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_figure4(selected_team, year_range):
     # Create filter dataframe of requested team data
-    filter = teams_df[teams_df.name == selected_team]
-    # IDK what to say, this is needed untill i can fix it.
+    filter_team = teams_df[teams_df.team_id == selected_team]
+    # IDK what to say...
     if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter_team[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     else:
         year_range = [1903,1919]
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        # Filter the years of the data to be within range
+        filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     # Create a list of years the team appear
     YR = filter_year.year
     # Create lists of team data
@@ -191,13 +194,13 @@ def update_figure4(selected_team, year_range):
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_figure5(selected_team, year_range):
     # Create filter dataframe of requested team
-    filter = teams_df[teams_df.name == selected_team]
+    filter_team = teams_df[teams_df.team_id == selected_team]
     # I will revisit this again soon, it just doesnt seem efficient
     if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter_team[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     else:
         year_range = [1903,1919]
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     # Create a list of years the team appear
     YR = filter_year.year
     # Create lists of team data
@@ -227,13 +230,13 @@ def update_figure5(selected_team, year_range):
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_table(selected_team, year_range):
     # Create filter dataframe of requested team
-    filter = teams_df[teams_df.name == selected_team]
-    # I will revisit this again soon, it just doesnt seem efficient
+    filter_team = teams_df[teams_df.team_id == selected_team]
+
     if year_range:
-        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+        filter_year = filter_team[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
     else:
-        # year_range = [1903,1919]
-        filter_year = filter[( filter.year >= 1903 )&( filter.year <= 1919 )]
+        year_range = [1903,1919]
+        filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
 
     # remove unneccesary columns
     # only want accolades
@@ -261,64 +264,74 @@ def update_table(selected_team, year_range):
     return WIN.to_dict('records'), [{'name': x, 'id': x} for x in WIN]
 
 
+# Dynamically create a list of ballplayers will known name (not given name) and player id based on team and era
 @app.callback(
     [Output('player-dropdown', 'options'), Output('player-dropdown', 'value')],
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_player_dropdown(selected_team, year_range):
     # Create filter dataframe of requested team
-    filter_team = teams_df[teams_df.name == selected_team]
+    filter_team = teams_df[teams_df.team_id == selected_team]
     # Select team id from filter
     # Apply filter team id to batters dataframe
     batters = batter_df[batter_df.team_id == filter_team.team_id.iloc[0]]
 
-    # Set year range
-    # I will revisit this again soon, it just doesnt seem efficient
     if year_range:
         data = batters[( batters.year >= year_range[0] )&( batters.year <= year_range[1] )]
     else:
         data = batters[( batters.year >= 1903 )&( batters.year <= 1919 )]
 
     # set a series of player id
-    names = data.player_id
+    name_id = data.player_id
 
     # merge player id series with player dataframe (profiles)
-    players_mer = pd.merge(names, player_df, how='left', on='player_id')
+    players_mer = pd.merge(name_id, player_df, how='left', on='player_id')
 
-    # concatenate first and last name
+    # concatenate first and last name into a new column
     players_mer['known_name'] = players_mer['name_first'] + " " + players_mer['name_last']
 
     # set list of given names of each ball player
     known = players_mer.known_name.to_list()
 
-    # use given names list to set a key value pair for dropdown
-    names = [{'label': x, 'value': x} for x in known]
+    # use known names list and name id list to set a key value pair for dropdown
+    names = [{'label': x, 'value': y }for x, y in zip(known, name_id)]
 
     # Return given name key value pair to options and value of dropdown
     return names, names[0]['value']
 
 
+# This will display the players profile
+@app.callback(
+    [Output('playerProfile', 'data'),Output('playerProfile','columns')],
+    [Input('player-dropdown', 'value')])
+def update_batter_table(player):
+    # concatenate the first and last name in the player profile dataframe
+    player_df['known_name'] = player_df['name_first'] + " " + player_df['name_last']
+
+    # Create player filter with selected player id
+    filter_player = player_df[player_df.player_id == player]
+
+    # drop unneccesary columns
+    data_filter = filter_player.drop(columns=['player_id', 'name_first', 'name_last',
+        'name_given', 'retro_id', 'bbref_id', 'known_name', 'birth_month', 'birth_day',
+        'birth_country', 'birth_city', 'birth_state', 'death_month', 'death_day',
+        'death_country', 'death_city', 'death_state',])
+
+    # Return filtered players dictionary to data and key value pair to columns
+    return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
+
+
+# This will display the players batting performance
 @app.callback(
     [Output('batterTable', 'data'),Output('batterTable','columns')],
     [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),
     Input('era-slider', 'value')])
 def update_batter_table(player, selected_team, year_range):
-    # take in the selected team
-    filter_team = teams_df[teams_df.name == selected_team]
-    # Select team id from filter
-    T_id = filter_team.team_id
-
-    player_df['known_name'] = player_df['name_first'] + " " + player_df['name_last']
-
-    # Create player filter with selected player
-    filter_player = player_df[player_df.known_name == player]
-    # Select player id from filter
-    P_id = filter_player.player_id
+    # take in the selected team id
+    filter_team = teams_df[teams_df.team_id == selected_team]
 
     # Apply filter player and team id to batters dataframe
-    batters = batter_df[(batter_df.player_id == P_id.iloc[0])&(batter_df.team_id == T_id.iloc[0])]
+    batters = batter_df[(batter_df.player_id == player)&(batter_df.team_id == filter_team.team_id.iloc[0])]
 
-    # Set year range
-    # I will revisit this again soon, it just doesnt seem efficient
     if year_range:
         data = batters[( batters.year >= year_range[0] )&( batters.year <= year_range[1] )]
     else:
