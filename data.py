@@ -1,12 +1,25 @@
-# Import bootstrap, dash-html, pandas
-import dash_bootstrap_components as dbc
-import dash_html_components as html
+# Improtant note: This data file would ordinarily be used to connect with a proper database server
+# more likely PostgreSQL, but thats me. I do plan on rewritting this in the future for such implementations.
+# With that said, this file will be be very slow to run and only to demonstrates data prep for processing using
+# functions and pandas
 import pandas as pd
 
+
 # Import CSV data
-teams = pd.read_csv('data/team.csv')
+# Import team historical statistics
+# Replacements are used to allow for easier display of historical team data
+# Some historical team names are correlated with their more modern counter part
+# Im sure there is a better way, be back to this later
+teams = pd.read_csv('data/team_update.csv')
+
+# Import Players batting data
 batters = pd.read_csv('data/batting.csv')
+
+# Import Player profile data
 players = pd.read_csv('data/player.csv')
+
+team_players = pd.read_csv('data/player_team.csv')
+
 
 # Hardcoded list of era names as key value pairs
 era_list = [{'label': 'Dead Ball (\'03-\'19)','value': 'Dead Ball'},
@@ -17,15 +30,16 @@ era_list = [{'label': 'Dead Ball (\'03-\'19)','value': 'Dead Ball'},
             {'label': 'Steroid (\'94-\'05)','value': 'Steroid'},
             {'label': 'Post-Steroid (\'06-\'15)','value': 'Post-Steroid'}]
 
+# Era markers
 era_marks = {
-                1903: {'label': '1903'},
-                1919: {'label': '1919'},
-                1941: {'label': '1941'},
-                1960: {'label': '1960'},
-                1976: {'label': '1976'},
-                1993: {'label': '1993'},
-                2005: {'label': '2005'},
-                2015: {'label': '2015'},
+                1903: {'label': '1903',},
+                1919: {'label': '1919',},
+                1941: {'label': '1941',},
+                1960: {'label': '1960',},
+                1976: {'label': '1976',},
+                1993: {'label': '1993',},
+                2005: {'label': '2005',},
+                2015: {'label': '2015',},
             }
 
 

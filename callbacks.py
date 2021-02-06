@@ -8,7 +8,8 @@ import pandas as pd
 
 # Import custom data.py
 import data
-# Import team data from data.py file
+
+# Import data from data.py file
 teams_df = data.teams
 # Hardcoded list that contain era names
 era_list = data.era_list
@@ -16,6 +17,8 @@ era_list = data.era_list
 batter_df = data.batters
 # Player Profiles data
 player_df = data.players
+
+team_players_df = data.team_players
 
 
 # This will update the team dropdown and the range of the slider
@@ -243,10 +246,8 @@ def update_table(selected_team, year_range):
     Data = filter_year.drop(columns=['team_id', 'g', 'w', 'l', 'r', 'ab', 'h', 'double', 'triple',
         'hr', 'bb', 'so', 'sb', 'cs', 'era', 'cg', 'sho', 'sv', 'ha', 'hra', 'bba', 'soa', 'e', 'dp',
         'fp', 'name', 'park'])
-
     # Check if the team won a world series
     WIN = Data[Data.ws_win == 'Y']
-
     # if empty, no world series won
     if WIN.empty:
         # Check if the team won a wild card, will only apply to teams in the 2000s
@@ -269,76 +270,53 @@ def update_table(selected_team, year_range):
     [Output('player-dropdown', 'options'), Output('player-dropdown', 'value')],
     [Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_player_dropdown(selected_team, year_range):
-    # Create filter dataframe of requested team
-    filter_team = teams_df[teams_df.team_id == selected_team]
-    # Select team id from filter
-    # Apply filter team id to batters dataframe
-    batters = batter_df[batter_df.team_id == filter_team.team_id.iloc[0]]
-
+    # Select team
+    team = team_players_df[team_players_df.team_id == selected_team]
+    # Check/filter year range
     if year_range:
-        data = batters[( batters.year >= year_range[0] )&( batters.year <= year_range[1] )]
+        filter_year = team[(team.year >= year_range[0])&(team.year <= year_range[1])]
     else:
-        data = batters[( batters.year >= 1903 )&( batters.year <= 1919 )]
-
-    # set a series of player id
-    name_id = data.player_id
-
-    # merge player id series with player dataframe (profiles)
-    players_mer = pd.merge(name_id, player_df, how='left', on='player_id')
-
-    # concatenate first and last name into a new column
-    players_mer['known_name'] = players_mer['name_first'] + " " + players_mer['name_last']
-
-    # set list of given names of each ball player
-    known = players_mer.known_name.to_list()
-
-    # use known names list and name id list to set a key value pair for dropdown
-    names = [{'label': x, 'value': y }for x, y in zip(known, name_id)]
-
+        filter_year = team[(team.year >= 1903 )&(team.year <= 1919 )]
+    # Use known names to set a key value pair for dropdown
+    names = [{'label': k, 'value': v }for k, v in zip(filter_year.known_name, filter_year.player_id)]
+    # Set new list
+    player_list = []
+    # append list with unique names, prevents duplicate entries
+    # Using unique function in pandas removes names that are supposed to be included
+    [player_list.append(x) for x in names if x not in player_list]
     # Return given name key value pair to options and value of dropdown
-    return names, names[0]['value']
+    return player_list, player_list[0]['value']
 
 
-# This will display the players profile
 @app.callback(
     [Output('playerProfile', 'data'),Output('playerProfile','columns')],
     [Input('player-dropdown', 'value')])
-def update_batter_table(player):
-    # concatenate the first and last name in the player profile dataframe
-    player_df['known_name'] = player_df['name_first'] + " " + player_df['name_last']
-
-    # Create player filter with selected player id
+def update_profile_table(player):
+    # Create player filter with selected player
     filter_player = player_df[player_df.player_id == player]
-
     # drop unneccesary columns
     data_filter = filter_player.drop(columns=['player_id', 'name_first', 'name_last',
-        'name_given', 'retro_id', 'bbref_id', 'known_name', 'birth_month', 'birth_day',
+        'name_given', 'retro_id', 'bbref_id', 'birth_month', 'birth_day',
         'birth_country', 'birth_city', 'birth_state', 'death_month', 'death_day',
         'death_country', 'death_city', 'death_state',])
-
-    # Return filtered players dictionary to data and key value pair to columns
+    # Return batters dictionary to data and batters key value pair to columns
     return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
 
 
-# This will display the players batting performance
 @app.callback(
     [Output('batterTable', 'data'),Output('batterTable','columns')],
-    [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),
-    Input('era-slider', 'value')])
+    [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),Input('era-slider', 'value')])
 def update_batter_table(player, selected_team, year_range):
-    # take in the selected team id
-    filter_team = teams_df[teams_df.team_id == selected_team]
-
-    # Apply filter player and team id to batters dataframe
-    batters = batter_df[(batter_df.player_id == player)&(batter_df.team_id == filter_team.team_id.iloc[0])]
-
+    # take in the selected team
+    filter_team = batter_df[batter_df.team_id == selected_team]
+    # Set year range
     if year_range:
-        data = batters[( batters.year >= year_range[0] )&( batters.year <= year_range[1] )]
+        filter_year = filter_team[(filter_team.year >= year_range[0] )&(filter_team.year <= year_range[1] )]
     else:
-        data = batters[( batters.year >= 1903 )&( batters.year <= 1919 )]
-
+        filter_year = filter_team[(filter_team.year >= 1903 )&(filter_team.year <= 1919 )]
+    # Apply filter player and team id to batters dataframe
+    filter_batter = filter_year[filter_year.player_id == player]
     # drop unneccesary columns
-    data_filter = data.drop(columns=['player_id', 'stint', 'team_id', 'league_id'])
-
+    data_filter = filter_batter.drop(columns=['player_id', 'team_id', 'stint', 'league_id'])
     # Return batters dictionary to data and batters key value pair to columns
     return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
