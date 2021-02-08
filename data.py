@@ -53,20 +53,23 @@ def dynamicteams(x):
                 (1977,1993),
                 (1994,2005),
                 (2006,2015)]
+
     # create a filter list of just years and team names
     filter_team_yr = teams[['year','name','team_id']]
+
     # filter the above list by year span
-    filter_year = filter_team_yr[(filter_team_yr.year >= era_time[x][0])&(filter_team_yr.year <= era_time[x][1])] # High Year
-    # filter_year = filter_year[] # Low Year
+    filter_year = filter_team_yr[(filter_team_yr.year >= era_time[x][0])&(filter_team_yr.year <= era_time[x][1])]
+
     # Create a filter list of Team names and ids based on years filter
     filter_teams = filter_year['name'].unique()
     filter_team_ids = filter_year['team_id'].unique()
+
     # return unique list of team names and ids as a list of key value pairs
     return [{'label': k, 'value': v }for k, v in zip(filter_teams, filter_team_ids)]
 
 
 def dynamicrange(x):
-    # Hardcoded data is not typically what i do unless the set is small
+    # Hardcoded data is not typically what i would do unless the set is small
     era_time = [(1903,1919),
                 (1920,1941),
                 (1942,1960),
@@ -75,3 +78,28 @@ def dynamicrange(x):
                 (1994,2005),
                 (2006,2015)]
     return [era_time[x][0],era_time[x][1]]
+
+
+# Calculate On-Base Percentage function
+def calculate_obp(data):
+    # Set lists of team data
+    AB = data.ab
+    Ht = data.h
+    BB = data.bb
+    HBP = data.hbp
+    SF = data.sf
+    # return On-Base Percentage
+    return (Ht + BB + HBP) / (AB + BB + HBP + SF)
+
+
+# Calculate Slugging Average
+def calculate_slg(data):
+    # Set lists of player data
+    AB = data.ab
+    Ht = data.h
+    DBL = data.double
+    TRP = data.triple
+    HR = data.hr
+    SNG = Ht - DBL - TRP - HR
+    # return Slugging Average
+    return (SNG + 2*DBL + 3*TRP + 4*HR)/AB

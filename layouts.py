@@ -32,7 +32,7 @@ appMenu = html.Div([
         dcc.RangeSlider(
             id='era-slider',
             className='era-slider',
-            min=teams_df[teams_df.year == 1903].iloc[0].year,
+            min=1903,
             max=teams_df['year'].max(),
             marks=era_marks,
             tooltip={'always_visible': False, 'placement': 'bottom'},),
@@ -100,5 +100,12 @@ playerLayout = html.Div([
         style_cell={
                 'textAlign': 'center',
                 'padding': '8px',
-            },
-)],className = 'slice feature app-page') # added app-page css
+            }
+    ),
+    # Line/Bar Chart of On-Base Percentage, features; H BB HBP SF
+    dcc.Graph(className = 'slice feature', id='obp-line', config={'displayModeBar': False}),
+    # Line/Bar Chart of Slugging Average, features; 2B 3B HR
+    dcc.Graph(className = 'slice feature', id='slg-line', config={'displayModeBar': False}),
+    # Line Chart of OPS, Features; OBP SLG
+    dcc.Graph(className = 'slice feature', id='ops-line', config={'displayModeBar': False}),
+],className = 'slice feature app-page') # added app-page css

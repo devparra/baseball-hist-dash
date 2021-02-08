@@ -98,38 +98,24 @@ def update_figure2(selected_team, year_range):
         year_range = [1903,1919]
         # Filter the years of the data to be within range
         filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
-    # Set a list of years team appear
-    YR = filter_year.year
-    # Set lists of team data
-    AB = filter_year.ab
-    Ht = filter_year.h
-    SO = filter_year.so
-    BB = filter_year.bb
-    DBL = filter_year.double
-    TRP = filter_year.triple
-    HR = filter_year.hr
-    HBP = filter_year.hbp
-    SF = filter_year.sf
-    Db = filter_year.double
-    Tr = filter_year.triple
-    # Calculate Singles
-    Sg = Ht - Db - Tr - HR
 
     # Calculate Slugging Average
-    SLG = (Sg + 2*Db + 3*Tr + 4*HR)/AB
+    SLG = data.calculate_slg(filter_year)
     # Calculate BABIP
-    BABIP = (Ht - HR) / (AB - SO - HR)
+    BABIP = (filter_year.h - filter_year.hr) / (filter_year.ab - filter_year.so - filter_year.hr)
     # Calculete Batting Average
-    BAVG = Ht / AB
-    # Create Line char figure using Strikeout Rate, BABIP, and Batting Average
+    BAVG = filter_year.h / filter_year.ab
+
+    # Create Line char figure using Slugging Average, BABIP, and Batting Average
     fig2 = go.Figure(data=[
-        go.Scatter(name='Slugging Average', x=filter_year.year, y=SLG, mode='markers', marker_color='Orange'),
-        go.Scatter(name='Batting Average Balls In Play', x=filter_year.year, y=BABIP, mode='markers', marker_color='#005C5C'),
+        go.Scatter(name='Slugging Average', x=filter_year.year, y=SLG, mode='lines+markers', marker_color='Orange'),
+        go.Scatter(name='Batting Average Balls In Play', x=filter_year.year, y=BABIP, mode='lines+markers', marker_color='#005C5C'),
         go.Scatter(name='Batting Average', x=filter_year.year, y=BAVG, mode='lines+markers', marker_color='#0C2C56'),
     ])
     # Update layout, set hover to X-Axis and establish title
     fig2.update_layout(hovermode="x",title="Batting Performance",
         font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+
     # Return figure
     return fig2
 
@@ -148,14 +134,16 @@ def update_figure3(selected_team, year_range):
         year_range = [1903,1919]
         # Filter the years of the data to be within range
         filter_year = filter[( filter_team.year >= year_range[0] )&( filter_team.year <= year_range[1] )]
+
     # Create line chart figure using Errors and Double Plays
     fig3 = go.Figure(data=[
-            go.Scatter(name='Errors', x=filter_year.year, y=filter_year.e, mode='markers', marker=dict(color='#5F259F')),
-            go.Scatter(name='Double Plays', x=filter_year.year, y=filter_year.dp, mode='lines+markers', marker=dict(color='#005F61')),
+            go.Bar(name='Errors', x=filter_year.year, y=filter_year.e, marker=dict(color='#5F259F'),opacity=0.8),
+            go.Bar(name='Double Plays', x=filter_year.year, y=filter_year.dp, marker=dict(color='#005F61'),opacity=0.8)
     ])
     # Update Layout, set hover to X-Axis and establish title
-    fig3.update_layout(hovermode="x",title="Feilding Performance",
+    fig3.update_layout(barmode='stack',hovermode="x",title="Feilding Performance",
         font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+
     # return figure
     return fig3
 
@@ -327,3 +315,131 @@ def update_batter_table(player, selected_team, year_range):
     data_filter = filter_batter.drop(columns=['player_id', 'team_id', 'stint', 'league_id'])
     # Return batters dictionary to data and batters key value pair to columns
     return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
+
+
+# Call back to OBP Line Graph
+@app.callback(
+    Output('obp-line', 'figure'),
+    [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure6(player, selected_team, year_range):
+    # Create filter dataframe of requested team data
+    filter = batter_df[batter_df.team_id == selected_team]
+    # This still feels like a hack
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+
+    # Filter player
+    filter_batter = filter_year[filter_year.player_id == player]
+
+    # Calculate On-Base Percentage
+    OBP = data.calculate_obp(filter_batter)
+
+    # Create Line char figure using Slugging Averate, BABIP, and Batting Average
+    fig6 = go.Figure()
+
+    # add OBP scatter plot
+    fig6.add_trace(go.Scatter(name='On-Base Percentage', x=filter_batter.year, y=OBP*750,
+        mode='lines+markers',
+        marker_color='dodgerblue',
+        hovertemplate = 'OBP: %{text:.3f}<extra></extra><br>',
+        text = ['{}'.format(i) for i in OBP]))
+
+    # doesnt like adding all bar charts at once, IDK it works
+    # add supporting bar charts, stats that are required for calculating OBP
+    # exception of at-bats which would dwarf the other stats... not that hits dont :\
+    fig6.add_trace(go.Bar(name='Hits', x=filter_batter.year, y=filter_batter.h, marker_color='Blue',opacity=0.4))
+    fig6.add_trace(go.Bar(name='Walks', x=filter_batter.year, y=filter_batter.bb, marker_color='Green',opacity=0.4))
+    fig6.add_trace(go.Bar(name='Hit-By-Pitch', x=filter_batter.year, y=filter_batter.hbp, marker_color='Orange',opacity=0.4))
+    fig6.add_trace(go.Bar(name='Sacrifice Flys', x=filter_batter.year, y=filter_batter.sf, marker_color='Red',opacity=0.4))
+
+    # Update layout, set hover to X-Axis and establish title
+    fig6.update_layout(barmode='stack',hovermode="x",title="On-Base Performance",
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+    # Return figure
+    return fig6
+
+
+# Call back to SLG Line Graph
+@app.callback(
+    Output('slg-line', 'figure'),
+    [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure7(player, selected_team, year_range):
+    # Create filter dataframe of requested team data
+    filter = batter_df[batter_df.team_id == selected_team]
+    # Set year range
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+
+    # Filter player
+    filter_batter = filter_year[filter_year.player_id == player]
+
+    # Set singles
+    SNG = filter_batter.h - filter_batter.double - filter_batter.triple - filter_batter.hr
+
+    # Calculate Slugging Average
+    SLG = data.calculate_slg(filter_batter)
+
+    # Create figure
+    fig7 = go.Figure()
+    # add SLG scatter plot
+    fig7.add_trace(go.Scatter(name='Slugging Average', x=filter_batter.year, y=SLG*325,
+        mode='lines+markers',
+        marker_color='dodgerblue',
+        hovertemplate = 'SLG: %{text:.3f}<extra></extra><br>',
+        text = ['{}'.format(i) for i in SLG]))
+
+    # add supporting bar charts, stats that are required for calculating SLG
+    fig7.add_trace(go.Bar(name='Singles', x=filter_batter.year, y=SNG, marker_color='Blue',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Doubles', x=filter_batter.year, y=filter_batter.double, marker_color='Green',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Triples', x=filter_batter.year, y=filter_batter.triple, marker_color='Orange',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Home Runs', x=filter_batter.year, y=filter_batter.hr, marker_color='Red',opacity=0.4))
+
+    # Update layout, set hover to X-Axis and establish title
+    fig7.update_layout(barmode='stack',hovermode="x",title="Slugging Performance",
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+    # Return figure
+    return fig7
+
+
+# Call back to OPS Line Chart, Takes request data from dropdown menu
+@app.callback(
+    Output('ops-line', 'figure'),
+    [Input('player-dropdown', 'value'),Input('team-dropdown', 'value'),Input('era-slider', 'value')])
+def update_figure8(player, selected_team, year_range):
+    # Create filter dataframe of requested team data
+    filter = batter_df[batter_df.team_id == selected_team]
+    # Set year range
+    if year_range:
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+    else:
+        year_range = [1903,1919]
+        filter_year = filter[( filter.year >= year_range[0] )&( filter.year <= year_range[1] )]
+
+    # Filter player
+    filter_batter = filter_year[filter_year.player_id == player]
+
+    # Calculate On-Base Percentage
+    OBP = data.calculate_obp(filter_batter)
+    # Calculate Slugging Average
+    SLG = data.calculate_slg(filter_batter)
+    # Calculate On-Base + Slugging
+    OPS = OBP + SLG
+
+    # Create line chart figure using calculations
+    fig8 = go.Figure(data=[
+            go.Scatter(name='OPS', x=filter_batter.year, y=OPS, mode='lines+markers', marker_color='green'),
+            go.Scatter(name='SLG', x=filter_batter.year, y=SLG, mode='lines+markers', marker_color='dodgerblue'),
+            go.Scatter(name='OBP', x=filter_batter.year, y=OBP, mode='lines+markers', marker_color='orange')
+    ])
+
+    # Update Layout, set hover to X-Axis and establish title
+    fig8.update_layout(hovermode="x",title="On-Base + Slugging (OPS) Performance",
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+    # return figure
+    return fig8
