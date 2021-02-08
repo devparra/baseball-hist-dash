@@ -108,17 +108,24 @@ def update_figure2(selected_team, year_range):
     DBL = filter_year.double
     TRP = filter_year.triple
     HR = filter_year.hr
-    # Calculate Strikeout Rate
-    SOR = SO / AB
+    HBP = filter_year.hbp
+    SF = filter_year.sf
+    Db = filter_year.double
+    Tr = filter_year.triple
+    # Calculate Singles
+    Sg = Ht - Db - Tr - HR
+
+    # Calculate Slugging Average
+    SLG = (Sg + 2*Db + 3*Tr + 4*HR)/AB
     # Calculate BABIP
     BABIP = (Ht - HR) / (AB - SO - HR)
     # Calculete Batting Average
     BAVG = Ht / AB
     # Create Line char figure using Strikeout Rate, BABIP, and Batting Average
     fig2 = go.Figure(data=[
+        go.Scatter(name='Slugging Average', x=filter_year.year, y=SLG, mode='markers', marker_color='Orange'),
+        go.Scatter(name='Batting Average Balls In Play', x=filter_year.year, y=BABIP, mode='markers', marker_color='#005C5C'),
         go.Scatter(name='Batting Average', x=filter_year.year, y=BAVG, mode='lines+markers', marker_color='#0C2C56'),
-        go.Scatter(name='Balls (Hits) In Play', x=filter_year.year, y=BABIP, mode='markers', marker_color='#005C5C'),
-        go.Scatter(name='Strikeout Rate', x=filter_year.year, y=SOR, mode='markers', marker_color='#D50032'),
     ])
     # Update layout, set hover to X-Axis and establish title
     fig2.update_layout(hovermode="x",title="Batting Performance",
@@ -243,9 +250,9 @@ def update_table(selected_team, year_range):
 
     # remove unneccesary columns
     # only want accolades
-    Data = filter_year.drop(columns=['team_id', 'g', 'w', 'l', 'r', 'ab', 'h', 'double', 'triple',
-        'hr', 'bb', 'so', 'sb', 'cs', 'era', 'cg', 'sho', 'sv', 'ha', 'hra', 'bba', 'soa', 'e', 'dp',
-        'fp', 'name', 'park'])
+    Data = filter_year.drop(columns=['team_id', 'franchise_id', 'div_id', 'ghome', 'g', 'w', 'l', 'r', 'ab', 'h', 'double', 'triple',
+        'hr', 'bb', 'so', 'sb', 'cs', 'era', 'cg', 'sho', 'sv', 'ha', 'hra', 'bba', 'soa', 'e', 'dp', 'hbp', 'sf', 'ra', 'er', 'ipouts',
+        'fp', 'name', 'park', 'attendance', 'bpf', 'ppf', 'team_id_br', 'team_id_lahman45', 'team_id_retro'])
     # Check if the team won a world series
     WIN = Data[Data.ws_win == 'Y']
     # if empty, no world series won
@@ -298,7 +305,7 @@ def update_profile_table(player):
     data_filter = filter_player.drop(columns=['player_id', 'name_first', 'name_last',
         'name_given', 'retro_id', 'bbref_id', 'birth_month', 'birth_day',
         'birth_country', 'birth_city', 'birth_state', 'death_month', 'death_day',
-        'death_country', 'death_city', 'death_state',])
+        'death_country', 'death_city', 'death_state','final_game'])
     # Return batters dictionary to data and batters key value pair to columns
     return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
 

@@ -32,7 +32,7 @@ appMenu = html.Div([
         dcc.RangeSlider(
             id='era-slider',
             className='era-slider',
-            min=teams_df['year'].min(),
+            min=teams_df[teams_df.year == 1903].iloc[0].year,
             max=teams_df['year'].max(),
             marks=era_marks,
             tooltip={'always_visible': False, 'placement': 'bottom'},),
