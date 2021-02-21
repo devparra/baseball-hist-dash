@@ -1,6 +1,7 @@
-# import dash
+# import dash and bootstrap components
 import dash
 import dash_bootstrap_components as dbc
+
 
 # set app variable with dash, set external style to bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SANDSTONE])

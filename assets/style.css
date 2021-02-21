@@ -1,5 +1,3 @@
-/* baseball-hist-dash style sheet */
-/* Basic banner */
 .banner {
   padding-top: 2%;
   font-style: italic;
@@ -8,87 +6,42 @@
   margin-right: auto;
 }
 
-
-/* Main menu style for dropdowns and sliders */
 .menu {
-  height: 360px;
-  flex-direction: column;
-}
-
-.menu h2 {
+  margin-left: auto;
+  margin-right: auto;
+  width: 67%;
   margin-top: 10px;
-  margin-bottom: 5px;
-}
-
-.menu h4 {
-  margin-top: 5px;
   margin-bottom: 10px;
-  opacity: 70%;
-  font-weight: lighter;
-}
-
-.era {
-  text-align: center;
-  margin: auto;
-  font-size: 18px;
-  width: 220px;
 }
 
 .era-slider {
-  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.team {
-  text-align: center;
-  margin: auto;
-  font-size: 18px;
-  width: 300px;
-}
-
-.player {
-  width: 250px;
-  padding: 1%;
-}
-
-/* end of Menu styles */
-
-
-/* Basic landing */
-.home{
-  height: 421px;
-  padding: 5%;
+.app-page {
+  height: fit-content;
 }
 
 
-/* Features and slices are to be used together */
-/* NOTE: Features and slices will be replaced by Bootstrap grid */
-.slice {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+footer {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  background-color: #f8f5f0;
+  height: 10%;
 }
 
-.feature {
-  height: auto;
-  display: inline-block;
-}
-
-.feature2 {
-  height: auto;
-  width: 50%;
-  display: inline-block;
-}
-
-
-/* Footer */
 footer p {
   text-align: left;
   font-size: small;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 0%;
-  padding: 5%;
+  padding: 2%;
   height: 100%;
 }
 

@@ -1,5 +1,6 @@
-# Import Bootstrap from Dash
+# Import Bootstrap components
 import dash_bootstrap_components as dbc
+
 
 # Navigation Bar fucntion
 def Navbar():
@@ -10,7 +11,8 @@ def Navbar():
             label="MENU",
             children=[
                     dbc.DropdownMenuItem("Team Analysis", href='/team'),
-                    dbc.DropdownMenuItem("Player Analysis", href='/player'),
+                    dbc.DropdownMenuItem("Batting Analysis", href='/batter'),
+                    dbc.DropdownMenuItem("Pitching/Fielding Analysis", href='/field'),
                 ],
             ),
         ],
