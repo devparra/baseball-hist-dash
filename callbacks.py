@@ -134,8 +134,8 @@ def update_figure1(selected_team, year_range):
         filter_year = filter_team[( filter_team.year >= 1903 )&( filter_team.year <= 1919 )]
     # Create Bar Chart figure, Wins and Losses
     fig1 = go.Figure(data=[
-        go.Bar(name='Wins', x=filter_year.year, y=filter_year.w, marker_color='#004687'),
-        go.Bar(name='Losses', x=filter_year.year, y=filter_year.l,  marker_color='#AE8F6F')
+        go.Bar(name='Wins', x=filter_year.year, y=filter_year.w, marker_color='#004687',opacity=0.8),
+        go.Bar(name='Losses', x=filter_year.year, y=filter_year.l,  marker_color='#AE8F6F',opacity=0.8)
     ])
     # set x axes title and tick to only include year given no half year such as 1927.5
     fig1.update_xaxes(title='Year',tickformat='d')
@@ -170,9 +170,9 @@ def update_figure2(selected_team, year_range):
 
     # Create Line char figure using Slugging Average, BABIP, and Batting Average
     fig2 = go.Figure(data=[
-        go.Scatter(name='Slugging Average', x=filter_year.year, y=SLG, mode='lines+markers', marker_color='Orange'),
-        go.Scatter(name='Batting Average Balls In Play', x=filter_year.year, y=BABIP, mode='lines+markers', marker_color='#005C5C'),
-        # go.Scatter(name='Batting Average', x=filter_year.year, y=BAVG, mode='lines+markers', marker_color='#0C2C56'),
+        go.Scatter(name='Slugging Average', x=filter_year.year, y=SLG, mode='lines+markers', marker_color='Orange',opacity=0.9),
+        go.Scatter(name='Batting Average Balls In Play', x=filter_year.year, y=BABIP, mode='lines+markers', marker_color='#005C5C',opacity=0.8),
+        # go.Scatter(name='Batting Average', x=filter_year.year, y=BAVG, mode='lines+markers', marker_color='#0C2C56',opacity=0.8),
     ])
 
     fig2.update_xaxes(title='Year',tickformat='d')
@@ -197,8 +197,8 @@ def update_figure3(selected_team, year_range):
         filter_year = filter_team[( filter_team.year >= 1903 )&( filter_team.year <= 1919 )]
     # Create line chart figure using Errors and Double Plays
     fig3 = go.Figure(data=[
-            go.Bar(name='Errors', x=filter_year.year, y=filter_year.e, marker=dict(color='#5F259F'),opacity=0.8),
-            go.Bar(name='Double Plays', x=filter_year.year, y=filter_year.dp, marker=dict(color='#005F61'),opacity=0.8),
+            go.Bar(name='Errors', x=filter_year.year, y=filter_year.e, marker=dict(color='#5F259F'), opacity=0.7),
+            go.Bar(name='Double Plays', x=filter_year.year, y=filter_year.dp, marker=dict(color='#005F61'), opacity=0.7),
     ])
 
     fig3.update_xaxes(title='Year',tickformat='d')
@@ -234,7 +234,7 @@ def update_figure4(selected_team, year_range):
     PCT = [CG, SHO, SV]
 
     # Create Pie chart figure of Complete games, Shutouts, and saves
-    fig4 = go.Figure(go.Pie(values=PCT,labels=['Complete Games','Shutouts','Saves'],))
+    fig4 = go.Figure(go.Pie(values=PCT,labels=['Complete Games','Shutouts','Saves'], opacity=0.8))
     fig4.update_layout(hovermode=False,title="% of Total Games Played",
         font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
     # Update figure trace marker colors
@@ -269,7 +269,7 @@ def update_figure5(selected_team, year_range):
         x=filter_year.year,
         y=RATIO,
         mode='markers',
-        marker=dict(symbol="circle-open-dot", size=5.*ERA, color='#006BA6',),
+        marker=dict(symbol="circle-open-dot", size=8.*ERA, color='#006BA6',),
         hovertemplate = 'K/BB: %{y:.2f}<extra></extra><br>' + '%{text}',
         text = ['ERA: {}'.format(i) for i in ERA]))
 
@@ -374,16 +374,16 @@ def update_figure6(player, selected_team, year_range):
         hovertemplate = 'OBP: %{text:.3f}<extra></extra><br>',
         text = ['{}'.format(i) for i in OBP]))
     # WOBA line
-    fig6.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA*750, mode='lines+markers', marker_color='red',
+    fig6.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA*750, mode='lines+markers', marker_color='orangered',
         hovertemplate = 'WOBA: %{text:.3f}<extra></extra><br>',
         text = ['{}'.format(i) for i in WOBA]))
 
     # add supporting bar charts, stats that are required for calculating OBP
     # exception of at-bats which would dwarf the other stats... not that hits dont :\
-    fig6.add_trace(go.Bar(name='Hits', x=filter_batter.year, y=filter_batter.h, marker_color='Blue',opacity=0.4))
-    fig6.add_trace(go.Bar(name='Walks', x=filter_batter.year, y=filter_batter.bb, marker_color='Green',opacity=0.4))
+    fig6.add_trace(go.Bar(name='Hits', x=filter_batter.year, y=filter_batter.h, marker_color='saddlebrown',opacity=0.4))
+    fig6.add_trace(go.Bar(name='Walks', x=filter_batter.year, y=filter_batter.bb, marker_color='tan',opacity=0.4))
     fig6.add_trace(go.Bar(name='Hit-By-Pitch', x=filter_batter.year, y=filter_batter.hbp, marker_color='Orange',opacity=0.4))
-    fig6.add_trace(go.Bar(name='Sacrifice Flys', x=filter_batter.year, y=filter_batter.sf, marker_color='Red',opacity=0.4))
+    fig6.add_trace(go.Bar(name='Sacrifice Flys', x=filter_batter.year, y=filter_batter.sf, marker_color='black',opacity=0.4))
 
     # Update figure
     fig6.update_xaxes(title='year',tickformat='d')
@@ -425,10 +425,10 @@ def update_figure7(player, selected_team, year_range):
         hovertemplate = 'SLG: %{text:.3f}<extra></extra><br>',
         text = ['{}'.format(i) for i in SLG]))
     # add supporting bar charts, stats that are required for calculating SLG
-    fig7.add_trace(go.Bar(name='Singles', x=filter_batter.year, y=SNG, marker_color='Blue',opacity=0.4))
-    fig7.add_trace(go.Bar(name='Doubles', x=filter_batter.year, y=filter_batter.double, marker_color='Green',opacity=0.4))
-    fig7.add_trace(go.Bar(name='Triples', x=filter_batter.year, y=filter_batter.triple, marker_color='Orange',opacity=0.4))
-    fig7.add_trace(go.Bar(name='Home Runs', x=filter_batter.year, y=filter_batter.hr, marker_color='Red',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Singles', x=filter_batter.year, y=SNG, marker_color='#005A9C',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Doubles', x=filter_batter.year, y=filter_batter.double, marker_color='#A5ACAF',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Triples', x=filter_batter.year, y=filter_batter.triple, marker_color='#EF3E42',opacity=0.4))
+    fig7.add_trace(go.Bar(name='Home Runs', x=filter_batter.year, y=filter_batter.hr, marker_color='darkslategray',opacity=0.4))
 
     # Update figure
     fig7.update_xaxes(title='Year',tickformat='d')
@@ -606,13 +606,13 @@ def update_figure9(player, position, selected_team, year_range):
         # add Fielding percentage line plot
         fig9.add_trace(go.Scatter(name='Fielding Percentage', x=filter_pos.year, y=FLDP*1000,
             mode='lines+markers',
-            marker_color='dodgerblue',
+            marker_color='rebeccapurple',
             hovertemplate = 'FLD: %{text:.3f}<extra></extra><br>',
             text = ['{}'.format(i) for i in FLDP]))
         # add supporting bar charts, stats that are required for calculating Fielding percentage
-        fig9.add_trace(go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, marker_color='Green',opacity=0.4))
-        fig9.add_trace(go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, marker_color='Orange',opacity=0.4))
-        fig9.add_trace(go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, marker_color='Red',opacity=0.4))
+        fig9.add_trace(go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, marker_color='#33006F',opacity=0.4))
+        fig9.add_trace(go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, marker_color='#C4CED4',opacity=0.4))
+        fig9.add_trace(go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, marker_color='black',opacity=0.4))
         # update figure
         fig9.update_xaxes(title='Year',tickformat='d')
         fig9.update_yaxes(fixedrange=True)
@@ -641,7 +641,7 @@ def update_figure9(player, position, selected_team, year_range):
             y=WHIP,
             legendgroup='group4',
             mode='lines+markers',
-            marker_color='Orange',
+            marker_color='lightseagreen',
             hovertemplate = 'WHIP: %{text:.3f}<extra></extra><br>',
             text = ['{}'.format(i) for i in WHIP])
         # apend figure to subplot 1,1
@@ -658,7 +658,8 @@ def update_figure9(player, position, selected_team, year_range):
             y=RATIO,
             legendgroup='group3',
             mode='markers',
-            marker=dict(symbol="circle-open-dot", size=5.*ERA, color='#006BA6',),
+            marker=dict(symbol="circle-open-dot", size=ERA, sizemode='area',
+                sizeref=2.*max(ERA)/(40.**2), sizemin=4, color='darkblue',),
             hovertemplate = 'K/BB: %{y:.2f}<extra></extra><br>' + '%{text}',
             text = ['ERA: {}'.format(i) for i in ERA])
         # append figure to subplot 2,1
@@ -668,7 +669,7 @@ def update_figure9(player, position, selected_team, year_range):
         # calculate winning percentage
         wl_pct = filter_pitcher.w / (filter_pitcher.w + filter_pitcher.l)
         # set Win Loss Performance
-        pwin_bar = go.Bar(name='wPCT', x=filter_pitcher.year, y=wl_pct, legendgroup='group2', marker_color='Green', opacity=0.4,
+        pwin_bar = go.Bar(name='wPCT', x=filter_pitcher.year, y=wl_pct, legendgroup='group2', marker_color='#00A3E0', opacity=0.4,
             hovertemplate = 'wPCT: %{y:.3f}<extra></extra><br>')
         # add figure to subplot 3,1
         fig9.append_trace(pwin_bar,row=3,col=1)
@@ -680,20 +681,20 @@ def update_figure9(player, position, selected_team, year_range):
         field_fig = go.Scatter(name='Fielding Percentage', x=filter_pos.year, y=FLDP*1000,
             legendgroup='group',
             mode='lines+markers',
-            marker_color='dodgerblue',
+            marker_color='rebeccapurple',
             hovertemplate = 'FLD: %{text:.3f}<extra></extra><br>',
             text = ['{}'.format(i) for i in FLDP])
         # append fielding to subplot 4,1
         fig9.append_trace(field_fig,row=4,col=1)
         # create supporting bar charts
-        po_bar = go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, legendgroup='group', marker_color='Green',opacity=0.4)
-        assis_bar = go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, legendgroup='group', marker_color='Orange',opacity=0.4)
-        err_bar = go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, legendgroup='group', marker_color='Red',opacity=0.4)
+        po_bar = go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, legendgroup='group', marker_color='#33006F',opacity=0.4)
+        assis_bar = go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, legendgroup='group', marker_color='#C4CED4',opacity=0.4)
+        err_bar = go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, legendgroup='group', marker_color='black',opacity=0.4)
         # add supporting bar charts to subplot 1,1
         fig9.add_trace(po_bar,row=4,col=1)
         fig9.add_trace(assis_bar,row=4,col=1)
         fig9.add_trace(err_bar,row=4,col=1)
-        
+
         # Update layout, set hover to x-axis, barmode, establish title and colors
         fig9.update_layout(height=1400, hovermode="x", barmode='stack', xaxis=dict(title='Year',tickformat='d'), yaxis=dict(title='WHIP'),
             xaxis2=dict(title='Year',tickformat='d'), yaxis2=dict(title='K/BB Ratio'), xaxis3=dict(title='Year',tickformat='d'), yaxis3=dict(title='W-L PCT'),
