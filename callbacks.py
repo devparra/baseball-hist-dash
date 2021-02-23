@@ -363,7 +363,7 @@ def update_figure6(player, selected_team, year_range):
 
     # Make calculations for graph
     OBP = data.calculate_obp(filter_batter)
-    WOBA = data.calculate_woba(filter_batter)
+    # WOBA = data.calculate_woba(filter_batter)
 
     # Create Line char figure
     fig6 = go.Figure()
@@ -374,9 +374,9 @@ def update_figure6(player, selected_team, year_range):
         hovertemplate = 'OBP: %{text:.3f}<extra></extra><br>',
         text = ['{}'.format(i) for i in OBP]))
     # WOBA line
-    fig6.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA*750, mode='lines+markers', marker_color='orangered',
-        hovertemplate = 'WOBA: %{text:.3f}<extra></extra><br>',
-        text = ['{}'.format(i) for i in WOBA]))
+    # fig6.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA*750, mode='lines+markers', marker_color='orangered',
+    #     hovertemplate = 'WOBA: %{text:.3f}<extra></extra><br>',
+    #     text = ['{}'.format(i) for i in WOBA]))
 
     # add supporting bar charts, stats that are required for calculating OBP
     # exception of at-bats which would dwarf the other stats... not that hits dont :\
@@ -389,7 +389,8 @@ def update_figure6(player, selected_team, year_range):
     fig6.update_xaxes(title='year',tickformat='d')
     fig6.update_yaxes(fixedrange=True)
     fig6.update_layout(barmode='stack',hovermode="x",title="On-Base Performance",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.07))
 
     return fig6
 
@@ -434,7 +435,8 @@ def update_figure7(player, selected_team, year_range):
     fig7.update_xaxes(title='Year',tickformat='d')
     fig7.update_yaxes(fixedrange=True)
     fig7.update_layout(barmode='stack',hovermode="x",title="Slugging Performance",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+            legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
 
     return fig7
 
@@ -476,7 +478,8 @@ def update_figure8(player, selected_team, year_range):
     fig8.update_xaxes(title='Year',tickformat='d')
     fig8.update_yaxes(fixedrange=True)
     fig8.update_layout(hovermode="x",title="On-Base + Slugging (OPS) Performance",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+            legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
 
     return fig8
 

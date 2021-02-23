@@ -149,12 +149,17 @@ battingLayout = html.Div([
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'opacity': '70%'},
             children='Some statistics where not tracked until the 1950s, graphs may not always reflect certain plots.'))),
 
-    # Line/Bar Chart of On-Base Percentage, features; H BB HBP SF
-    dbc.Row(dbc.Col(dcc.Graph(id='obp-line', config={'displayModeBar': False}))),
-    # Line/Bar Chart of Slugging Average, features; 2B 3B HR
-    dbc.Row(dbc.Col(dcc.Graph(id='slg-line', config={'displayModeBar': False}))),
+    dbc.Row(
+        [
+            # Line/Bar Chart of On-Base Percentage, features; H BB HBP SF
+            dbc.Col(dcc.Graph(id='obp-line', config={'displayModeBar': False}), width=6),
+            # Line/Bar Chart of Slugging Average, features; 2B 3B HR
+            dbc.Col(dcc.Graph(id='slg-line', config={'displayModeBar': False}), width=6)
+        ],
+        no_gutters=True,
+    ),
     # Line Chart of OPS, Features; OBP SLG
-    dbc.Row(dbc.Col(dcc.Graph(id='ops-line', config={'displayModeBar': False}))),
+    dbc.Row(dbc.Col(dcc.Graph(id='ops-line', config={'displayModeBar': False}), width=12)),
 ],className = 'app-page')
 
 
