@@ -6,11 +6,11 @@ teams and players in the range set on the years slider. The slider allows the us
 with wich the data is presented.
 
 ## The Analysis
-The applicaiton breaks down each baseballs teams win/loss performance within a range of the teams history.
+The applicaiton breaks down each baseball teams win/loss performance within a range of the teams history.
 Additionally, the application will break down the batting performance with the team batting average, BABIP, and strikeout
 rate. The application also brakes down the piching perfomance using the teams ERA and strikeout to walk ratio. Finally the feilding
-performance of each team is illustrated with total errors and double plays. The applicaiton will also breakdown
-each of teams players statistics within the given era.
+performance of each team is illustrated with total errors and double plays. The applicaiton will similarly breakdown
+each teams players statistics within the given era.
 
 ## Dependencies
 - Python 3.8.5+
