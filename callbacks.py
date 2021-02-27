@@ -56,6 +56,9 @@ def select_era(selected_era):
     elif (selected_era == era_list[6]['value']):
         teams = data.dynamicteams(6)
         range = data.dynamicrange(6)
+    elif (selected_era == era_list[7]['value']):
+        teams = data.dynamicteams(7)
+        range = data.dynamicrange(7)
     else:
         teams = data.dynamicteams(0)
         range = data.dynamicrange(0)

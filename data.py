@@ -12,15 +12,15 @@ import pandas as pd
 # Some historical team names are correlated with their more modern counter part
 # Custome CSV files where created from the original by combining data to allow
 # for easier display of historical team data
-teams = pd.read_csv('data/team_update.csv')
+teams = pd.read_csv('data/update_team.csv')
 # Import Players batting data
-batters = pd.read_csv('data/batting.csv')
+batters = pd.read_csv('data/update_batting.csv')
 # Import custom Fielding data
 fielding = pd.read_csv('data/update_fielding.csv')
 # Import custom pitching data
 pitching = pd.read_csv('data/update_pitching.csv')
 # Import Player profile data
-players = pd.read_csv('data/player.csv')
+players = pd.read_csv('data/update_player.csv')
 # Import custom player and team id dataframe
 team_players = pd.read_csv('data/player_team.csv')
 
@@ -31,7 +31,8 @@ era_list = [{'label': 'Dead Ball (\'03-\'19)','value': 'Dead Ball'},
             {'label': 'Expantion (\'61-\'76)','value': 'Expantion'},
             {'label': 'Free Agency (\'77-\'93)','value': 'Free Agency'},
             {'label': 'Steroid (\'94-\'05)','value': 'Steroid'},
-            {'label': 'Post-Steroid (\'06-\'15)','value': 'Post-Steroid'}]
+            {'label': 'Post-Steroid (\'06-\'15)','value': 'Post-Steroid'},
+            {'label': 'Statcast (\'16-\'20)','value': 'Statcast'}]
 
 # Era markers
 era_marks = {
@@ -43,6 +44,7 @@ era_marks = {
                 1993: {'label': '1993',},
                 2005: {'label': '2005',},
                 2015: {'label': '2015',},
+                2020: {'label': '2020',}
             }
 
 
@@ -55,7 +57,8 @@ def dynamicteams(x):
                 (1961,1976),
                 (1977,1993),
                 (1994,2005),
-                (2006,2015)]
+                (2006,2015),
+                (2016,2020)]
     # create a filter list of just years and team names
     filter_team_yr = teams[['year','name','team_id']]
     # filter the above list by year span
@@ -79,7 +82,8 @@ def dynamicrange(x):
                 (1961,1976),
                 (1977,1993),
                 (1994,2005),
-                (2006,2015)]
+                (2006,2015),
+                (2016,2020)]
     return [era_time[x][0],era_time[x][1]]
 
 
