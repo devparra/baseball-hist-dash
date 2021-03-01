@@ -37,14 +37,6 @@ container = dbc.Container([
     content,
 ])
 
-# Footer with acknowledments
-footer = html.Footer([dcc.Markdown('''
-    The data used in this application was retrieved from [Seanlahman.com](http://www.seanlahman.com/baseball-archive/statistics/).
-    Provided by [Chadwick Baseball Bureau's GitHub](https://github.com/chadwickbureau/baseballdatabank/) .
-    This database is copyright 1996-2021 by Sean Lahman. This data is licensed under a Creative Commons Attribution-ShareAlike
-    3.0 Unported License. For details see: [CreativeCommons](http://creativecommons.org/licenses/by-sa/3.0/)
-    '''),])
-
 
 # Menu callback, set and return
 # Declair function  that connects other pages with content to container
@@ -67,10 +59,15 @@ def display_page(pathname):
             performance of each team is illustrated with total errors and double plays. The applicaiton will also breakdown
             each of teams players statistics within the given era.
 
-        ''')],style={'height': '700px','padding': '5%'})
+            ### The Data
+            The data used in this application was retrieved from [Seanlahman.com](http://www.seanlahman.com/baseball-archive/statistics/).
+            Provided by [Chadwick Baseball Bureau's GitHub](https://github.com/chadwickbureau/baseballdatabank/) .
+            This database is copyright 1996-2021 by Sean Lahman. This data is licensed under a Creative Commons Attribution-ShareAlike
+            3.0 Unported License. For details see: [CreativeCommons](http://creativecommons.org/licenses/by-sa/3.0/)
+        ''')],className='home')
     elif pathname == '/team':
         return appMenu, menuSlider, teamLayout
-    elif pathname == '/batter':
+    elif pathname == '/player':
         return appMenu, menuSlider, playerMenu, battingLayout
     elif pathname == '/field':
         return appMenu, menuSlider, playerMenu, fieldingLayout
@@ -82,8 +79,7 @@ def display_page(pathname):
 def index():
     layout = html.Div([
             nav,
-            container,
-            footer
+            container
         ])
     return layout
 

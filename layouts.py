@@ -66,23 +66,23 @@ menuSlider = html.Div([
 teamLayout = html.Div([
     dbc.Row(dbc.Col(html.H3(children='Team Accolades'))),
     # Display Championship titles in datatable
-    dbc.Row(dbc.Col(html.Div(id='team-data'),width=7),justify="center"),
-
+    dbc.Row(dbc.Col(html.Div(id='team-data'), xs={'size':'auto', 'offset':0}, sm={'size':'auto', 'offset':0}, md={'size':7, 'offset':0}, lg={'size':'auto', 'offset':0},
+                xl={'size':'auto', 'offset':0}),justify="center"),
     ### Graphs of Historical Team statistics ###
     dbc.Row(dbc.Col(html.H3(children='Team Analysis'))),
     # Bar Chart of Wins and Losses
-    dbc.Row(dbc.Col(dcc.Graph(id='wl-bar', config={'displayModeBar': False}))),
+    dbc.Row(dbc.Col(dcc.Graph(id='wl-bar', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 12, 'offset': 0})),
     # Line Chart of Batting Average, BABIP, and Strikeout Rate
-    dbc.Row(dbc.Col(dcc.Graph(id='batting-line', config={'displayModeBar': False}))),
+    dbc.Row(dbc.Col(dcc.Graph(id='batting-line', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 12, 'offset': 0})),
     # Bar Char of Errors and Double Plays
-    dbc.Row(dbc.Col(dcc.Graph(id='feild-line', config={'displayModeBar': False}))),
+    dbc.Row(dbc.Col(dcc.Graph(id='feild-line', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 12, 'offset': 0})),
     dbc.Row(dbc.Col(html.H4(children='Pitching Performance'))),
     dbc.Row(
         [
             # Line graph of K/BB ratio with ERA bubbles
-            dbc.Col(dcc.Graph(id='pitch-bubble', config={'displayModeBar': False}), md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
+            dbc.Col(dcc.Graph(id='pitch-bubble', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
             # Pie Chart, % of Completed Games, Shutouts, and Saves of Total Games played
-            dbc.Col(dcc.Graph(id='pitch-pie', config={'displayModeBar': False}), md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
+            dbc.Col(dcc.Graph(id='pitch-pie', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
         ],
         no_gutters=True,
     ),
@@ -112,6 +112,11 @@ playerMenu = html.Div([
             id='playerProfile',
             style_as_list_view=True,
             editable=False,
+            style_table={
+                'overflowY': 'scroll',
+                'width': '100%',
+                'minWidth': '100%',
+            },
             style_header={
                     'backgroundColor': '#f8f5f0',
                     'fontWeight': 'bold'
@@ -120,7 +125,8 @@ playerMenu = html.Div([
                     'textAlign': 'center',
                     'padding': '8px',
                 },
-        ),width=8),justify="center"),
+        ), xs={'size':'auto', 'offset':0}, sm={'size':'auto', 'offset':0}, md={'size':8, 'offset':0}, lg={'size':'auto', 'offset':0},
+                xl={'size':'auto', 'offset':0}),justify="center"),
     html.Br()
 ],className = 'app-page')
 
@@ -133,6 +139,11 @@ battingLayout = html.Div([
             id='batterTable',
             style_as_list_view=True,
             editable=False,
+            style_table={
+                'overflowY': 'scroll',
+                'width': '100%',
+                'minWidth': '100%',
+            },
             style_header={
                     'backgroundColor': '#f8f5f0',
                     'fontWeight': 'bold'
@@ -141,7 +152,8 @@ battingLayout = html.Div([
                     'textAlign': 'center',
                     'padding': '8px',
                 }
-        ),width=10),justify="center"),
+        ), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':10, 'offset':0}, lg={'size':10, 'offset':0},
+                xl={'size':10, 'offset':0}),justify="center"),
 
 
     dbc.Row(dbc.Col(html.H3(style={'margin-top': '1%', 'margin-bottom': '1%'},
@@ -152,14 +164,15 @@ battingLayout = html.Div([
     dbc.Row(
         [
             # Line/Bar Chart of On-Base Percentage, features; H BB HBP SF
-            dbc.Col(dcc.Graph(id='obp-line', config={'displayModeBar': False}), md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
+            dbc.Col(dcc.Graph(id='obp-line', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
             # Line/Bar Chart of Slugging Average, features; 2B 3B HR
-            dbc.Col(dcc.Graph(id='slg-line', config={'displayModeBar': False}), md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0})
+            dbc.Col(dcc.Graph(id='slg-line', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0})
         ],
         no_gutters=True,
     ),
     # Line Chart of OPS, Features; OBP SLG
-    dbc.Row(dbc.Col(dcc.Graph(id='ops-line', config={'displayModeBar': False}), width=12)),
+    dbc.Row(dbc.Col(dcc.Graph(id='ops-line', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0},
+        md={'size': 12, 'offset': 0},lg={'size': 12, 'offset': 0})),
 ],className = 'app-page')
 
 
@@ -171,6 +184,11 @@ fieldingLayout = html.Div([
             id='fieldTable',
             style_as_list_view=True,
             editable=False,
+            style_table={
+                'overflowY': 'scroll',
+                'width': '100%',
+                'minWidth': '100%',
+            },
             style_header={
                     'backgroundColor': '#f8f5f0',
                     'fontWeight': 'bold'
@@ -179,10 +197,11 @@ fieldingLayout = html.Div([
                     'textAlign': 'center',
                     'padding': '8px',
                 }
-        ),width=8),justify="center"),
+        ), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':8, 'offset':0}, lg={'size':8, 'offset':0}, xl={'size':8, 'offset':0}),justify="center"),
     html.Br(),
     dbc.Row(dbc.Col(html.H3(style={'margin-bottom': '1%'}, children='Pitching'))),
-    dbc.Row(dbc.Col(html.Div(id='pitch-data'),width=10),justify="center"),
+    dbc.Row(dbc.Col(html.Div(id='pitch-data'), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':10, 'offset':0},
+        lg={'size':10, 'offset':0}, xl={'size':10, 'offset':0}),justify="center"),
     html.Br(),
     dbc.Row(dbc.Col(html.H3(children='Player Analysis'))),
     # Player dropdown menu
@@ -199,6 +218,10 @@ fieldingLayout = html.Div([
         ],
         no_gutters=True,
     ),
-    # Pitching and Fielding graphs, Pitching graphs are set in a subplot
-    dbc.Row(dbc.Col(dcc.Graph(id='pitch-field-graphs', config={'displayModeBar': False})))
+    dbc.Row(dbc.Col(html.H4(children='Pitching Performance'))),
+    # Pitching and Fielding graphs, Pitching graphs are set in a subplot dcc.Graph(id='field-graphs', config={'displayModeBar': False})
+    dbc.Row(dbc.Col(html.Div(id='pitch-graphs'), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0},
+        md={'size':12, 'offset':0}, lg={'size':12, 'offset':0}, xl={'size':12, 'offset':0})),
+    dbc.Row(dbc.Col(dcc.Graph(id='field-graph', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0},
+        md={'size':12, 'offset':0}, lg={'size':12, 'offset':0}, xl={'size':12, 'offset':0})),
 ],className = 'app-page')

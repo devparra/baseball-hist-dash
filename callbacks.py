@@ -6,6 +6,7 @@ from plotly.subplots import make_subplots
 # Import dash html, bootstrap components, and tables for datatables
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
 import dash_table
 
 # Import app
@@ -146,7 +147,8 @@ def update_figure1(selected_team, year_range):
     fig1.update_yaxes(fixedrange=True)
     # Update figure, set hover to the X-Axis and establish title
     fig1.update_layout(hovermode="x",barmode='group',title="Win/Loss Performance",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
     # return figure
     return fig1
 
@@ -181,7 +183,8 @@ def update_figure2(selected_team, year_range):
     fig2.update_xaxes(title='Year',tickformat='d')
     fig2.update_yaxes(fixedrange=True)
     fig2.update_layout(hovermode="x",title="Batting Performance",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
 
     return fig2
 
@@ -207,7 +210,8 @@ def update_figure3(selected_team, year_range):
     fig3.update_xaxes(title='Year',tickformat='d')
     fig3.update_yaxes(fixedrange=True)
     fig3.update_layout(barmode='stack',hovermode="x",title="Feilding Performance",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
 
     return fig3
 
@@ -230,6 +234,7 @@ def update_figure4(selected_team, year_range):
         G = 1
     else:
         G = filter_year.g.sum()
+
     CG = filter_year.cg.sum() / G
     SHO = filter_year.sho.sum() / G
     SV = filter_year.sv.sum() / G
@@ -239,7 +244,8 @@ def update_figure4(selected_team, year_range):
     # Create Pie chart figure of Complete games, Shutouts, and saves
     fig4 = go.Figure(go.Pie(values=PCT,labels=['Complete Games','Shutouts','Saves'], opacity=0.8))
     fig4.update_layout(hovermode=False,title="% of Total Games Played",
-        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.15))
     # Update figure trace marker colors
     fig4.update_traces(marker=dict(colors=['#462425','#E35625','#CEC6C0']))
 
@@ -393,7 +399,7 @@ def update_figure6(player, selected_team, year_range):
     fig6.update_yaxes(fixedrange=True)
     fig6.update_layout(barmode='stack',hovermode="x",title="On-Base Performance",
         font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
-        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.07))
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.34))
 
     return fig6
 
@@ -439,7 +445,7 @@ def update_figure7(player, selected_team, year_range):
     fig7.update_yaxes(fixedrange=True)
     fig7.update_layout(barmode='stack',hovermode="x",title="Slugging Performance",
         font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
-            legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.15))
 
     return fig7
 
@@ -482,7 +488,7 @@ def update_figure8(player, selected_team, year_range):
     fig8.update_yaxes(fixedrange=True)
     fig8.update_layout(hovermode="x",title="On-Base + Slugging (OPS) Performance",
         font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
-            legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.27))
 
     return fig8
 
@@ -541,6 +547,11 @@ def update_pitch_table(player, selected_team, year_range):
             columns= [{'name': x, 'id': x} for x in data_filter],
             style_as_list_view=True,
             editable=False,
+            style_table={
+                'overflowY': 'scroll',
+                'width': '100%',
+                'minWidth': '100%',
+            },
             style_header={
                     'backgroundColor': '#f8f5f0',
                     'fontWeight': 'bold'
@@ -581,7 +592,7 @@ def update_pos_dropdown(player, selected_team, year_range):
 
 # Call back to Fielding/Pitching Graphs
 @app.callback(
-    Output('pitch-field-graphs', 'figure'),
+    Output('pitch-graphs', 'children'),
     [Input('player-dropdown', 'value'),Input('pos-dropdown', 'value'),
     Input('team-dropdown', 'value'),Input('era-slider', 'value')],)
 def update_figure9(player, position, selected_team, year_range):
@@ -597,35 +608,12 @@ def update_figure9(player, position, selected_team, year_range):
         filter_field_year = field_filter[( field_filter.year >= 1903 )&( field_filter.year <= 1919 )]
         filter_pitch_year = pitch_filter[( pitch_filter.year >= 1903 )&( pitch_filter.year <= 1919 )]
 
+    # Set empty list
+    data_note = []
     # if position is NOT pitcher create only a fielding percentage chart
     if position != 'P':
-        # Filter player
-        filter_field_player = filter_field_year[filter_field_year.player_id == player]
-        # filter position
-        filter_pos = filter_field_player[filter_field_player.pos == position]
-
-        # Calculate feilding Average
-        FLDP = (filter_pos.po + filter_pos.a) / (filter_pos.po + filter_pos.a + filter_pos.e)
-
-        # Set figure
-        fig9 = go.Figure()
-        # add Fielding percentage line plot
-        fig9.add_trace(go.Scatter(name='Fielding Percentage', x=filter_pos.year, y=FLDP*1000,
-            mode='lines+markers',
-            marker_color='rebeccapurple',
-            hovertemplate = 'FLD: %{text:.3f}<extra></extra><br>',
-            text = ['{}'.format(i) for i in FLDP]))
-        # add supporting bar charts, stats that are required for calculating Fielding percentage
-        fig9.add_trace(go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, marker_color='#33006F',opacity=0.4))
-        fig9.add_trace(go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, marker_color='#C4CED4',opacity=0.4))
-        fig9.add_trace(go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, marker_color='black',opacity=0.4))
-        # update figure
-        fig9.update_xaxes(title='Year',tickformat='d')
-        fig9.update_yaxes(fixedrange=True)
-        fig9.update_layout(height=400,barmode='stack',hovermode="x",title="Fielding Performance",
-            font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0')
-        # Return figure
-        return fig9
+        data_note.append(html.Div(dbc.Alert('No pitching graphs are available for selected player.', color='warning'),style={'padding-top': '1%'}))
+        return data_note
     # else if position is pitcher then create subplot with feilding and pitching performances
     elif position == 'P':
         # Filter player
@@ -634,7 +622,7 @@ def update_figure9(player, position, selected_team, year_range):
         filter_pos = filter_field_player[filter_field_player.pos == position]
 
         # Create subplot, spacing and titles
-        fig9 = make_subplots(rows=4, cols=1, vertical_spacing=0.1, subplot_titles=('Walks + Hits over Innings Pitched','Strikeout Rate with ERA Bubble','Win-Loss Performance','Fielding Performance'))
+        fig9 = make_subplots(rows=3, cols=1, subplot_titles=('Walks + Hits over Innings Pitched','Strikeout Rate with ERA Bubble','Win-Loss Performance'))
 
         ###### WHIP #####
         # Set innings and calculate WHIP
@@ -680,30 +668,58 @@ def update_figure9(player, position, selected_team, year_range):
         # add figure to subplot 3,1
         fig9.append_trace(pwin_bar,row=3,col=1)
 
-        #### feilding percentage ####
-        # Calculate fielding percentage
-        FLDP = (filter_pos.po + filter_pos.a) / (filter_pos.po + filter_pos.a + filter_pos.e)
-        # create Fielding percentage line plot
-        field_fig = go.Scatter(name='Fielding Percentage', x=filter_pos.year, y=FLDP*1000,
-            legendgroup='group',
-            mode='lines+markers',
-            marker_color='rebeccapurple',
-            hovertemplate = 'FLD: %{text:.3f}<extra></extra><br>',
-            text = ['{}'.format(i) for i in FLDP])
-        # append fielding to subplot 4,1
-        fig9.append_trace(field_fig,row=4,col=1)
-        # create supporting bar charts
-        po_bar = go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, legendgroup='group', marker_color='#33006F',opacity=0.4)
-        assis_bar = go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, legendgroup='group', marker_color='#C4CED4',opacity=0.4)
-        err_bar = go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, legendgroup='group', marker_color='black',opacity=0.4)
-        # add supporting bar charts to subplot 1,1
-        fig9.add_trace(po_bar,row=4,col=1)
-        fig9.add_trace(assis_bar,row=4,col=1)
-        fig9.add_trace(err_bar,row=4,col=1)
-
         # Update layout, set hover to x-axis, barmode, establish title and colors
         fig9.update_layout(height=1400, hovermode="x", barmode='stack', xaxis=dict(title='Year',tickformat='d'), yaxis=dict(title='WHIP'),
             xaxis2=dict(title='Year',tickformat='d'), yaxis2=dict(title='K/BB Ratio'), xaxis3=dict(title='Year',tickformat='d'), yaxis3=dict(title='W-L PCT'),
-            xaxis4=dict(title='Year',tickformat='d'), yaxis4=dict(title='Feilding Percentage'), font={'color':'darkslategray'}, paper_bgcolor='white',plot_bgcolor='#f8f5f0')
+            font={'color':'darkslategray'}, paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
         # return subplots
-        return fig9
+        graph = dcc.Graph(figure=fig9, config={'displayModeBar': False})
+        return graph
+
+# Call back to Fielding/Pitching Graphs
+@app.callback(
+    Output('field-graph', 'figure'),
+    [Input('player-dropdown', 'value'),Input('pos-dropdown', 'value'),
+    Input('team-dropdown', 'value'),Input('era-slider', 'value')],)
+def update_figure9(player, position, selected_team, year_range):
+    # Create filter dataframe of requested team data
+    field_filter = field_df[field_df.team_id == selected_team]
+    pitch_filter = pitching_df[pitching_df.team_id == selected_team]
+
+    # Filter year range
+    if year_range:
+        filter_field_year = field_filter[( field_filter.year >= year_range[0] )&( field_filter.year <= year_range[1] )]
+        filter_pitch_year = pitch_filter[( pitch_filter.year >= year_range[0] )&( pitch_filter.year <= year_range[1] )]
+    else:
+        filter_field_year = field_filter[( field_filter.year >= 1903 )&( field_filter.year <= 1919 )]
+        filter_pitch_year = pitch_filter[( pitch_filter.year >= 1903 )&( pitch_filter.year <= 1919 )]
+
+    # Filter player
+    filter_field_player = filter_field_year[filter_field_year.player_id == player]
+    # filter position
+    filter_pos = filter_field_player[filter_field_player.pos == position]
+
+    # Calculate feilding Average
+    FLDP = (filter_pos.po + filter_pos.a) / (filter_pos.po + filter_pos.a + filter_pos.e)
+
+    # Set figure
+    fig10 = go.Figure()
+    # add Fielding percentage line plot
+    fig10.add_trace(go.Scatter(name='Fielding Percentage', x=filter_pos.year, y=FLDP*1000,
+        mode='lines+markers',
+        marker_color='rebeccapurple',
+        hovertemplate = 'FLD: %{text:.3f}<extra></extra><br>',
+        text = ['{}'.format(i) for i in FLDP]))
+    # add supporting bar charts, stats that are required for calculating Fielding percentage
+    fig10.add_trace(go.Bar(name='Put Outs', x=filter_pos.year, y=filter_pos.po, marker_color='#33006F',opacity=0.4))
+    fig10.add_trace(go.Bar(name='Assists', x=filter_pos.year, y=filter_pos.a, marker_color='#C4CED4',opacity=0.4))
+    fig10.add_trace(go.Bar(name='Errors', x=filter_pos.year, y=filter_pos.e, marker_color='black',opacity=0.4))
+    # update figure
+    fig10.update_xaxes(title='Year',tickformat='d')
+    fig10.update_yaxes(fixedrange=True)
+    fig10.update_layout(height=400,barmode='stack',hovermode="x",title="Fielding Performance",
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.27))
+    # Return figure
+    return fig10
