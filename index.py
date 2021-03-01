@@ -11,8 +11,10 @@ from navbar import Navbar
 from layouts import appMenu, menuSlider, playerMenu, teamLayout, battingLayout, fieldingLayout
 import callbacks
 
-# Instantiate app with dash
+# Import app
 from app import app
+# Import server for deployment
+from app import srv as server
 
 
 # Layout variables, navbar, header, content, and container
@@ -90,4 +92,5 @@ app.layout = index()
 
 # Call app server
 if __name__ == '__main__':
+    # set debug to false when deploying app
     app.run_server(debug=True)

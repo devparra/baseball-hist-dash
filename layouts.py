@@ -152,9 +152,9 @@ battingLayout = html.Div([
     dbc.Row(
         [
             # Line/Bar Chart of On-Base Percentage, features; H BB HBP SF
-            dbc.Col(dcc.Graph(id='obp-line', config={'displayModeBar': False}), width=6),
+            dbc.Col(dcc.Graph(id='obp-line', config={'displayModeBar': False}), md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0}),
             # Line/Bar Chart of Slugging Average, features; 2B 3B HR
-            dbc.Col(dcc.Graph(id='slg-line', config={'displayModeBar': False}), width=6)
+            dbc.Col(dcc.Graph(id='slg-line', config={'displayModeBar': False}), md={'size': 12, 'offset': 0},lg={'size': 6, 'offset': 0})
         ],
         no_gutters=True,
     ),
