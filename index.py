@@ -46,11 +46,11 @@ def display_page(pathname):
     if pathname == '/':
         return html.Div([dcc.Markdown('''
             ### The Applicaiton
-            This application is a portfolio project built using Plotly's Dash, faculty.ai's Dash Bootstrap Components, and Pandas.
-            Using historical MLB (Major League Baseball) data, this application provides visualizations for team and player
-            statistics dating from 1903 to 2020. Selecting from a dropdown menu, the era will update the list of available
-            teams and players in the range set on the years slider. The slider allows the user to adjust the range of years
-            with wich the data is presented.
+            This application is a portfolio project built by [Matt Parra](https://devparra.github.io/) using Plotly's Dash,
+            faculty.ai's Dash Bootstrap Components, and Pandas. Using historical MLB (Major League Baseball) data,
+            this application provides visualizations for team and player statistics dating from 1903 to 2020. Selecting
+            from a dropdown menu, the era will update the list of available teams and players in the range set on the years
+            slider. The slider allows the user to adjust the range of years with which the data is presented.
 
             ### The Analysis
             The applicaiton breaks down each baseballs teams win/loss performance within a range of the teams history.

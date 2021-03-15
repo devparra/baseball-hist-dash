@@ -110,6 +110,11 @@ def update_win_table(selected_team, year_range):
             columns= [{'name': x, 'id': x} for x in WIN],
             style_as_list_view=True,
             editable=False,
+            style_table={
+                'overflowY': 'scroll',
+                'width': '100%',
+                'minWidth': '100%',
+            },
             style_header={
                     'backgroundColor': '#f8f5f0',
                     'fontWeight': 'bold'
