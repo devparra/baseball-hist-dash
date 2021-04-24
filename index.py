@@ -7,7 +7,6 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # Navbar, layouts, custom callbacks
-from navbar import Navbar
 from layouts import appMenu, menuSlider, playerMenu, teamLayout, battingLayout, fieldingLayout
 import callbacks
 
@@ -16,33 +15,64 @@ from app import app
 # Import server for deployment
 from app import srv as server
 
+# the style arguments for the sidebar. We use position:fixed and a fixed width
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
+    "background-color": "#f8f9fa",
+}
 
-# Layout variables, navbar, header, content, and container
-nav = Navbar()
+# the styles for the main content position it to the right of the sidebar and
+# add some padding.
+CONTENT_STYLE = {
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
 
-header = dbc.Row(
-    dbc.Col(
-        html.Div([
-            html.H2(children='Major League Baseball History'),
-            html.H3(children='A Visualization of Historical Data')])
-        ),className='banner')
+sidebar = html.Div(
+    [
+        html.H2("Major League Baseball", className="display-5"),
+        html.H2("Data Explorer", className="display-5"),
+        html.Hr(),
+        html.H2("Historical Analysis", className="lead"),
+        dbc.Nav(
+            [
+                dbc.NavLink("Home", href="/", active="exact"),
+                dbc.NavLink("Team Analysis", href="/team", active="exact"),
+                dbc.NavLink("Batting Analysis", href="/player", active="exact"),
+                dbc.NavLink("Pitching/Feilding Analysis", href="/field", active="exact"),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+        html.Hr(),
+        html.H2("Machine Learning Analysis", className="lead"),
+        dbc.Nav(
+            [
+                dbc.NavLink("Linear Analysis", href="/mline", active="exact"),
+                # dbc.NavLink("Batting Analysis", href="/player", active="exact"),
+                # dbc.NavLink("Pitching/Feilding Analysis", href="/field", active="exact"),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
 
-content = html.Div([
-    dcc.Location(id='url'),
-    html.Div(id='page-content')
-])
+content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-container = dbc.Container([
-    header,
-    content,
-])
+# Sidebar layout
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 
-# Menu callback, set and return
-# Declair function  that connects other pages with content to container
-@app.callback(Output('page-content', 'children'),
-            [Input('url', 'pathname')])
-def display_page(pathname):
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def render_page_content(pathname):
     if pathname == '/':
         return html.Div([dcc.Markdown('''
             ### The Applicaiton
@@ -72,19 +102,15 @@ def display_page(pathname):
     elif pathname == '/field':
         return appMenu, menuSlider, playerMenu, fieldingLayout
     else:
-        return 'ERROR 404: Page not found!'
+        # If the user tries to reach a different page, return a 404 message
+        return dbc.Jumbotron(
+            [
+                html.H1("404: Not found", className="text-danger"),
+                html.Hr(),
+                html.P(f"The pathname {pathname} was not recognised..."),
+            ]
+        )
 
-
-# Main index function that will call and return all layout variables
-def index():
-    layout = html.Div([
-            nav,
-            container
-        ])
-    return layout
-
-# Set layout to index function
-app.layout = index()
 
 # Call app server
 if __name__ == '__main__':

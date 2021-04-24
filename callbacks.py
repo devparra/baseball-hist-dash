@@ -377,7 +377,6 @@ def update_figure6(player, selected_team, year_range):
 
     # Make calculations for graph
     OBP = data.calculate_obp(filter_batter)
-    # WOBA = data.calculate_woba(filter_batter)
 
     # Create Line char figure
     fig6 = go.Figure()
@@ -387,10 +386,6 @@ def update_figure6(player, selected_team, year_range):
         marker_color='Orange',
         hovertemplate = 'OBP: %{text:.3f}<extra></extra><br>',
         text = ['{}'.format(i) for i in OBP]))
-    # WOBA line
-    # fig6.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA*750, mode='lines+markers', marker_color='orangered',
-    #     hovertemplate = 'WOBA: %{text:.3f}<extra></extra><br>',
-    #     text = ['{}'.format(i) for i in WOBA]))
 
     # add supporting bar charts, stats that are required for calculating OBP
     # exception of at-bats which would dwarf the other stats... not that hits dont :\
@@ -471,6 +466,8 @@ def update_figure8(player, selected_team, year_range):
     # Filter player
     filter_batter = filter_year[filter_year.player_id == player]
 
+    # Calculate 2019 WOBA
+    WOBA = data.calculate_woba(filter_batter)
     # Calculate On-Base Percentage
     OBP = data.calculate_obp(filter_batter)
     # Calculate Slugging Average
@@ -487,6 +484,11 @@ def update_figure8(player, selected_team, year_range):
             go.Scatter(name='OBP', x=filter_batter.year, y=OBP, mode='lines+markers', marker_color='orange',
                 hovertemplate = 'OBP: %{text:.3f}<extra></extra><br>',text = ['{}'.format(i) for i in OBP])
     ])
+
+    # WOBA line
+    fig8.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA, mode='lines+markers', marker_color='orangered',
+        hovertemplate = 'WOBA: %{text:.3f}<extra></extra><br>',
+        text = ['{}'.format(i) for i in WOBA]))
 
     # Update figure
     fig8.update_xaxes(title='Year',tickformat='d')

@@ -119,6 +119,6 @@ def calculate_woba(df):
     # Weighted Plate Appearances
     WPA = df.ab + df.bb - df.ibb + df.sf + df.hbp
     # weighted on-base average, 2013 https://library.fangraphs.com/offense/woba/
-    return ((0.690 * df.bb) + (0.722 * df.hbp) + (0.888 * SNG) + (1.271 * df.double) + (1.616 * df.triple) + (2.101 * df.hr)) / WPA
+    # return ((0.690 * df.bb) + (0.722 * df.hbp) + (0.888 * SNG) + (1.271 * df.double) + (1.616 * df.triple) + (2.101 * df.hr)) / WPA
     # weighted on-base average, 2019 https://en.wikipedia.org/wiki/WOBA#2019_Formula
-    # return ((0.690 * df.bb) + (0.719 * df.hbp) + (0.87 * SNG) + (1.217 * df.double) + (1.529 * df.triple) + (1.94 * df.hr)) / WPA
+    return ((0.690 * df.bb) + (0.719 * df.hbp) + (0.87 * SNG) + (1.217 * df.double) + (1.529 * df.triple) + (1.94 * df.hr)) / WPA
