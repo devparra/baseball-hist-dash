@@ -1,21 +1,22 @@
 # Historical Baseball Statistics Dashboard
 This application is a portfolio project built using Plotly's Dash, faculty.ai's Dash Bootstrap Components, and Pandas.
 Using historical MLB (Major League Baseball) data, this application provides visualizations for team and player
-statistics dating from 1903 to 2020. Selecting from a dropdown menu, the era will update the list of available
-teams and players in the range set on the years slider. The slider allows the user to adjust the range of years
-with wich the data is presented.
+statistics dating from 1903 to 2020. This application also provides player projections and uses a Linear Regression to
+evaluate player performance.
 
 ## The Analysis
 The applicaiton breaks down each baseball teams win/loss performance within a range of the teams history.
 Additionally, the application will break down the batting performance with the team batting average, BABIP, and strikeout
 rate. The application also brakes down the piching perfomance using the teams ERA and strikeout to walk ratio. Finally the feilding
 performance of each team is illustrated with total errors and double plays. The applicaiton will similarly breakdown
-each teams players statistics within the given era.
+each teams players statistics within the given era. The projections are displayed in a datatable while the regression analysis
+of the players career and recent seasons are displayed in an oscillating bar chart.
 
 ## Dependencies
 - Python 3.8.5+
 - Dash 1.19
 - Dash Bootstrap Components 0.11.1
+- Sklearn 0.24.1
 - Pandas 1.1
 
 ## The Data
