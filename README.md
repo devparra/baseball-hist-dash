@@ -16,7 +16,7 @@ of the players career and recent seasons are displayed in an oscillating bar cha
 - Python 3.8.5+
 - Dash 1.19
 - Dash Bootstrap Components 0.11.1
-- Sklearn 0.24.1
+- Sklearn 0.24.2
 - Pandas 1.1
 
 ## The Data
