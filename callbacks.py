@@ -29,6 +29,7 @@ batter_df = data.batters
 field_df = data.fielding
 pitching_df = data.pitching
 
+batter_df.astype({"rbi":'int64', "sb":'int64', "cs":'int64', "so":'int64', "ibb":'int64', "hbp":'int64', "sh":'int64', "sf":'int64', "g_idp":'int64'})
 
 # This will update the team dropdown and the range of the slider
 @app.callback(
@@ -467,7 +468,7 @@ def update_figure8(player, selected_team, year_range):
     filter_batter = filter_year[filter_year.player_id == player]
 
     # Calculate 2019 WOBA
-    WOBA = data.calculate_woba(filter_batter)
+    # WOBA = data.calculate_woba(filter_batter)
     # Calculate On-Base Percentage
     OBP = data.calculate_obp(filter_batter)
     # Calculate Slugging Average
@@ -484,11 +485,6 @@ def update_figure8(player, selected_team, year_range):
             go.Scatter(name='OBP', x=filter_batter.year, y=OBP, mode='lines+markers', marker_color='orange',
                 hovertemplate = 'OBP: %{text:.3f}<extra></extra><br>',text = ['{}'.format(i) for i in OBP])
     ])
-
-    # WOBA line
-    fig8.add_trace(go.Scatter(name='Weighted On-Base Average', x=filter_batter.year, y=WOBA, mode='lines+markers', marker_color='orangered',
-        hovertemplate = 'WOBA: %{text:.3f}<extra></extra><br>',
-        text = ['{}'.format(i) for i in WOBA]))
 
     # Update figure
     fig8.update_xaxes(title='Year',tickformat='d')
@@ -730,3 +726,170 @@ def update_figure9(player, position, selected_team, year_range):
         legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1.27))
     # Return figure
     return fig10
+
+
+# Machine Learning
+# This will update the team dropdown and the range of the slider
+@app.callback(
+    [Output('team-dropdown-select', 'options'),
+    Output('team-dropdown-select', 'value')],
+    [Input('year-dropdown-select', 'value')])
+def select_team(year):
+    # Check if selected era is equal to the value in the era list
+    # Makes sure that teams and range are set to desired era
+    teams = data.dynamicteams(7)
+    # Return team list, the initial value of the team list, and the range in the era
+    return teams, teams[0]['value']
+
+
+# Callback to player dropdown menu
+@app.callback(
+    [Output('team-player-dropdown', 'options'), Output('team-player-dropdown', 'value')],
+    [Input('team-dropdown-select', 'value'),Input('year-dropdown-select', 'value')])
+def update_team_dropdown(selected_team, year):
+    # Set filter dataframe of selected team
+    filter_team = team_players_df[team_players_df.team_id == selected_team]
+
+    filter_year = filter_team[filter_team.year == year]
+    
+    # Use known names to set a key value pair for dropdown
+    names = [{'label': k, 'value': v }for k, v in zip(filter_year.known_name, filter_year.player_id)]
+    # create empty list
+    player_list = []
+    # append to list if player is not in list
+    [player_list.append(x) for x in names if x not in player_list]
+
+    # Return given name and id key value pair to player dropdown
+    return player_list, player_list[0]['value']
+
+
+@app.callback(
+    [Output('select-playerProfile', 'data'),Output('select-playerProfile','columns')],
+    [Input('team-player-dropdown', 'value')])
+def update_player_table(player):
+    # Create player filter with selected player
+    filter_player = player_df[player_df.player_id == player]
+
+    # drop unneccesary columns
+    data_filter = filter_player.drop(columns=['player_id', 'name_first', 'name_last',
+        'name_given', 'retro_id', 'bbref_id', 'birth_month', 'birth_day',
+        'birth_country', 'birth_city', 'birth_state', 'death_month', 'death_day',
+        'death_country', 'death_city', 'death_state','final_game'])
+
+    # Return player profile to datatable
+    return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
+
+
+# Callback to players batting datatable
+@app.callback(
+    [Output('select-batterTable', 'data'),Output('select-batterTable','columns')],
+    [Input('team-player-dropdown', 'value')])
+def update_player_table(player):
+    # take in the selected team
+    filter_batter = batter_df[batter_df.player_id == player]
+
+    filter_batter_copy = filter_batter.copy()
+
+    filter_batter_copy['pa'] = filter_batter_copy.apply(data.calculate_pa,axis=1)
+    filter_batter_copy['obp'] = round(filter_batter_copy.apply(data.calculate_obp,axis=1),3)
+    filter_batter_copy['slg'] = round(filter_batter_copy.apply(data.calculate_slg,axis=1),3)
+    filter_batter_copy['ops'] = round(filter_batter_copy.apply(data.calculate_ops,axis=1),3)
+    filter_batter_copy['t_rc'] = round(filter_batter_copy.apply(data.calculate_trc,axis=1))
+    filter_batter_copy['b_rc'] = round(filter_batter_copy.apply(data.calculate_brc,axis=1))
+    filter_batter_copy['s_rc'] = round(filter_batter_copy.apply(data.calculate_sbrc,axis=1))
+
+    # drop unneccesary columns
+    data_filter = filter_batter_copy.drop(columns=['player_id','stint','league_id','stint','h','bb','hbp','sh','sf',
+        'r','double','triple','hr','rbi','sb','cs','so','ibb','g_idp'],axis=1)
+
+    # Return batters data and batters key value pair to columns
+    return data_filter.to_dict('records'), [{'name': x, 'id': x} for x in data_filter]
+
+
+# Callback to players batting datatable
+@app.callback(
+    [Output('batter-proj-table', 'data'),Output('batter-proj-table','columns')],
+    [Input('team-player-dropdown', 'value')])
+def update_proj_table(player):
+    # Apply filter to player ID in batters dataframe
+
+    filter_year = batter_df[(batter_df['year'] >= 2017) & (batter_df['year'] <= 2020)]
+
+    filter_year.reset_index(drop=True, inplace=True)
+
+    factor_data = data.year_factor(filter_year)
+
+    ml_data_filter = data.player_project(factor_data, player)
+
+    ml_data_filter.drop(['player_id','stint','league_id','stint','h','bb','hbp','sh','sf',
+        'r','double','triple','hr','rbi','sb','cs','so','ibb','g_idp'],inplace=True,axis=1)
+
+    # Return batters data and batters key value pair to columns
+    return ml_data_filter.to_dict('records'), [{'name': x, 'id': x} for x in ml_data_filter]
+
+
+@app.callback(
+    Output('lrce-bar', 'figure'),
+    [Input('team-player-dropdown', 'value')])
+def update_lrce_player(player):
+
+    filter_year = batter_df[(batter_df['year'] >= 2017) & (batter_df['year'] <= 2020)]
+    filter_year.reset_index(drop=True, inplace=True)
+    factor_data = data.year_factor(filter_year)
+    proj_data = data.player_project(factor_data, player)
+
+    player_career = batter_df[batter_df.player_id == player]
+    factor_career = data.year_factor(player_career)
+    factor_career['pa'] = factor_career.apply(data.calculate_pa,axis=1)
+    factor_career['obp'] = round(factor_career.apply(data.calculate_obp,axis=1),3)
+    factor_career['slg'] = round(factor_career.apply(data.calculate_slg,axis=1),3)
+    factor_career['ops'] = round(factor_career.apply(data.calculate_ops,axis=1),3)
+    factor_career['t_rc'] = round(factor_career.apply(data.calculate_trc,axis=1))
+    factor_career['b_rc'] = round(factor_career.apply(data.calculate_brc,axis=1))
+    factor_career['s_rc'] = round(factor_career.apply(data.calculate_sbrc,axis=1))
+    career_proj = factor_career.append(proj_data, ignore_index=True)
+    career_lrce = data.player_lr_eval(career_proj,player)
+    career_lrce.drop(['player_id','year','stint','league_id','stint','h','bb',
+        'hbp','sh','sf','r','double','triple','hr','rbi','sb','cs','so','ibb','g_idp'],
+        inplace=True,axis=1)
+    eval_career = career_lrce[career_lrce.team_id == 'EVAL'].to_numpy()
+
+    filter_player = filter_year[filter_year.player_id == player]
+    filter_factor = data.year_factor(filter_player)
+    filter_proj = filter_factor.append(proj_data, ignore_index=True)
+    filter_proj['pa'] = filter_proj.apply(data.calculate_pa,axis=1)
+    filter_proj['obp'] = round(filter_proj.apply(data.calculate_obp,axis=1),3)
+    filter_proj['slg'] = round(filter_proj.apply(data.calculate_slg,axis=1),3)
+    filter_proj['ops'] = round(filter_proj.apply(data.calculate_ops,axis=1),3)
+    filter_proj['t_rc'] = round(filter_proj.apply(data.calculate_trc,axis=1))
+    filter_proj['b_rc'] = round(filter_proj.apply(data.calculate_brc,axis=1))
+    filter_proj['s_rc'] = round(filter_proj.apply(data.calculate_sbrc,axis=1))
+    filter_lrce = data.player_lr_eval(filter_proj, player)
+    filter_lrce.drop(['player_id','year','stint','league_id','stint','h','bb',
+        'hbp','sh','sf','r','double','triple','hr','rbi','sb','cs','so','ibb','g_idp'],
+        inplace=True,axis=1)
+    eval_filter = filter_lrce[filter_lrce.team_id == 'EVAL'].to_numpy()
+    
+    # Create Bar Chart figure, Wins and Losses
+    fig1 = go.Figure(data=[
+        go.Bar(name='Career Coefficient', x=career_lrce.drop(['team_id'],axis=1).columns,
+            y=eval_career[0][1::], marker_color='#004687',opacity=0.8,
+            hovertemplate = '%{text:.2f}<extra></extra><br>',
+            text = ['{}'.format(i) for i in eval_career[0][1::]]),
+        go.Bar(name='Recent Coefficient', x=filter_lrce.drop(['team_id'],axis=1).columns,
+            y=eval_filter[0][1::], marker_color='#AE8F6F',opacity=0.8,
+            hovertemplate = '%{text:.2f}<extra></extra><br>',
+            text = ['{}'.format(i) for i in eval_filter[0][1::]])
+    ])
+    
+    # set x axes title and tick to only include year given no half year such as 1927.5
+    # fig1.update_xaxes(tickformat='d')
+    # set y axes to fixed selection range, user can only select data in the x axes
+    fig1.update_yaxes(fixedrange=True)
+    # Update figure, set hover to the X-Axis and establish title
+    fig1.update_layout(hovermode="x",barmode='group',
+        font={'color':'darkslategray'},paper_bgcolor='white',plot_bgcolor='#f8f5f0',
+        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1))
+    
+    # return figure
+    return fig1

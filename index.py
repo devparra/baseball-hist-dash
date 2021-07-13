@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 # Navbar, layouts, custom callbacks
-from layouts import appMenu, menuSlider, playerMenu, teamLayout, battingLayout, fieldingLayout
+from layouts import appMenu, menuSlider, playerMenu, teamLayout, battingLayout, fieldingLayout, projMenu, projLayout
 import callbacks
 
 # Import app
@@ -39,10 +39,15 @@ sidebar = html.Div(
         html.H2("Major League Baseball", className="display-5"),
         html.H2("Data Explorer", className="display-5"),
         html.Hr(),
+        dbc.Nav(
+            [dbc.NavLink("Home", href="/", active="exact")],
+            vertical=True,
+            pills=True,
+        ),
+        html.Hr(),
         html.H2("Historical Analysis", className="lead"),
         dbc.Nav(
             [
-                dbc.NavLink("Home", href="/", active="exact"),
                 dbc.NavLink("Team Analysis", href="/team", active="exact"),
                 dbc.NavLink("Batting Analysis", href="/player", active="exact"),
                 dbc.NavLink("Pitching/Feilding Analysis", href="/field", active="exact"),
@@ -54,7 +59,7 @@ sidebar = html.Div(
         html.H2("Machine Learning Analysis", className="lead"),
         dbc.Nav(
             [
-                dbc.NavLink("Linear Analysis", href="/mline", active="exact"),
+                dbc.NavLink("Projections and Regression", href="/projection", active="exact"),
                 # dbc.NavLink("Batting Analysis", href="/player", active="exact"),
                 # dbc.NavLink("Pitching/Feilding Analysis", href="/field", active="exact"),
             ],
@@ -75,21 +80,12 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 def render_page_content(pathname):
     if pathname == '/':
         return html.Div([dcc.Markdown('''
-            ### The Applicaiton
+            ### Applicaiton Introduction
             This application is a portfolio project built by [Matt Parra](https://devparra.github.io/) using Plotly's Dash,
-            faculty.ai's Dash Bootstrap Components, and Pandas. Using historical MLB (Major League Baseball) data,
-            this application provides visualizations for team and player statistics dating from 1903 to 2020. Selecting
-            from a dropdown menu, the era will update the list of available teams and players in the range set on the years
-            slider. The slider allows the user to adjust the range of years with which the data is presented.
+            faculty.ai's Dash Bootstrap Components, Pandas, SKlearn's Linear Regression algorithm, and custom functions. 
+            Using historical MLB (Major League Baseball) data, this application provides visualizations for team and player 
+            statistics dating from 1903 to 2020. This application also provides player projections and regression analysis.
 
-            ### The Analysis
-            The applicaiton breaks down each baseballs teams win/loss performance within a range of the teams history.
-            Additionally, the application will break down the batting performance with the team batting average, BABIP, and strikeout
-            rate. The application also brakes down the piching perfomance using the teams ERA and strikeout to walk ratio. Finally the feilding
-            performance of each team is illustrated with total errors and double plays. The applicaiton will also breakdown
-            each of teams players statistics within the given era.
-
-            ### The Data
             The data used in this application was retrieved from [Seanlahman.com](http://www.seanlahman.com/baseball-archive/statistics/).
             Provided by [Chadwick Baseball Bureau's GitHub](https://github.com/chadwickbureau/baseballdatabank/) .
             This database is copyright 1996-2021 by Sean Lahman. This data is licensed under a Creative Commons Attribution-ShareAlike
@@ -101,6 +97,8 @@ def render_page_content(pathname):
         return appMenu, menuSlider, playerMenu, battingLayout
     elif pathname == '/field':
         return appMenu, menuSlider, playerMenu, fieldingLayout
+    elif pathname == '/projection':
+        return projMenu, projLayout
     else:
         # If the user tries to reach a different page, return a 404 message
         return dbc.Jumbotron(
