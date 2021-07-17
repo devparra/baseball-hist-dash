@@ -467,8 +467,6 @@ def update_figure8(player, selected_team, year_range):
     # Filter player
     filter_batter = filter_year[filter_year.player_id == player]
 
-    # Calculate 2019 WOBA
-    # WOBA = data.calculate_woba(filter_batter)
     # Calculate On-Base Percentage
     OBP = data.calculate_obp(filter_batter)
     # Calculate Slugging Average
@@ -819,7 +817,8 @@ def update_proj_table(player):
 
     factor_data = data.year_factor(filter_year)
 
-    ml_data_filter = data.player_project(factor_data, player)
+    ml_data_filter = data.player_project(data.calculate_pa, data.calculate_obp, data.calculate_slg, 
+        data.calculate_ops, data.calculate_brc, data.calculate_sbrc, data.calculate_trc, factor_data, player)
 
     ml_data_filter.drop(['player_id','stint','league_id','stint','h','bb','hbp','sh','sf',
         'r','double','triple','hr','rbi','sb','cs','so','ibb','g_idp'],inplace=True,axis=1)
@@ -836,7 +835,8 @@ def update_lrce_player(player):
     filter_year = batter_df[(batter_df['year'] >= 2017) & (batter_df['year'] <= 2020)]
     filter_year.reset_index(drop=True, inplace=True)
     factor_data = data.year_factor(filter_year)
-    proj_data = data.player_project(factor_data, player)
+    proj_data = data.player_project(data.calculate_pa, data.calculate_obp, data.calculate_slg, 
+        data.calculate_ops, data.calculate_brc, data.calculate_sbrc, data.calculate_trc, factor_data, player)
 
     player_career = batter_df[batter_df.player_id == player]
     factor_career = data.year_factor(player_career)
@@ -882,8 +882,6 @@ def update_lrce_player(player):
             text = ['{}'.format(i) for i in eval_filter[0][1::]])
     ])
     
-    # set x axes title and tick to only include year given no half year such as 1927.5
-    # fig1.update_xaxes(tickformat='d')
     # set y axes to fixed selection range, user can only select data in the x axes
     fig1.update_yaxes(fixedrange=True)
     # Update figure, set hover to the X-Axis and establish title

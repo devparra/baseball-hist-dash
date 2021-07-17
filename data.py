@@ -203,107 +203,17 @@ def year_factor(df):
     return df_copy
 
 
-def player_project(data, player):
+def player_project(pa_func, obp_func, slg_func, ops_func, brc_func, src_func, trc_func, data, player):
     
-    # Calculate the average At-Bats per Game played in a season
     def ab_rate(df):
         return df.ab / df.g
-    
-    # Calculate Estimate Plate Appearence
-    def calc_pa(df):
-        ab = df.ab
-        bb = df.bb
-        hbp = df.hbp
-        sf = df.sf
-        sh = df.sh
-        return ab + bb + hbp + sf + sh
-
-    # Calculate On-Base Percentage
-    def calc_obp(df):
-        AB = df.ab
-        Ht = df.h
-        BB = df.bb
-        HBP = df.hbp
-        SF = df.sf
-        try:
-            return (Ht + BB + HBP) / (AB + BB + HBP + SF)
-        except ZeroDivisionError :
-            return 0
-
-    # Calculate Slugging Average
-    def calc_slg(df):
-        AB = df.ab
-        Ht = df.h
-        DBL = df.double
-        TRP = df.triple
-        HR = df.hr
-        SNG = Ht - DBL - TRP - HR
-        try:
-            return (SNG + 2*DBL + 3*TRP + 4*HR)/AB
-        except ZeroDivisionError :
-            return 0
-
-    # Calculate OPS
-    def calc_ops(df):
-        slg = df.slg
-        obp = df.obp
-        return obp + slg
-
-    # Basic
-    # (H+BB)*(TB)/(AB+BB)
-    def calc_brc(df):
-        SNG = df.h - df.double - df.triple - df.hr
-        DBL = 2*df.double
-        TPL = 3*df.triple
-        HR = 4*df.hr
-        TB = (SNG + DBL + TPL + HR)
-        calc_1 = (df.h + df.bb)
-        calc_2 = (df.ab + df.bb)
-        try:
-            return ((calc_1) * (TB) / (calc_2))
-        except ZeroDivisionError :
-            return 0
-
-    # Stolen Base
-    # (H+BB-CS)*(TB+(.55*SB))/(AB+BB)
-    def calc_sbrc(df):
-        SNG = df.h - df.double - df.triple - df.hr
-        DBL = 2*df.double
-        TPL = 3*df.triple
-        HR = 4*df.hr
-        TB = (SNG + DBL + TPL + HR)
-        calc_1 = (df.h + df.bb - df.cs)
-        calc_2 = .55 * df.sb
-        calc_3 = df.ab + df.bb
-        try:
-            return (((calc_1) * ((TB) + (calc_2))) / calc_3)
-        except ZeroDivisionError :
-            return 0
-    
-    # Technical
-    # (H+BB-CS+HBP-GIDP)*(TB+(.26*(BB-IBB+HBP))+(.52*(SH+SF+SB)))/(AB+BB+HBP+SH+SF)
-    def calc_trc(df):
-        SNG = df.h - df.double - df.triple - df.hr
-        DBL = 2 * df.double
-        TPL = 3 * df.triple
-        HR = 4 * df.hr
-        TB = (SNG + DBL + TPL + HR)
-        calc_1 = (df.h + df.bb - df.cs + df.hbp - df.g_idp) 
-        calc_2 = .26 * (df.bb - df.ibb + df.hbp)
-        calc_3 = .52 * (df.sh + df.sf + df.sb)
-        calc_4 = (df.ab + df.bb + df.hbp + df.sh + df.sf)
-        try:
-            return (((calc_1)*((TB)+(calc_2)+(calc_3)))/(calc_4))
-        except ZeroDivisionError :
-            return 0
-
 
     player_data = data[data.player_id == player]
 
     player_data = player_data.groupby(['year']).sum().reset_index()
     
-
     proj_games = round(np.average(player_data['g'], weights=player_data['g']))
+
     player_data['rate'] = player_data.apply(ab_rate,axis=1)
     player_ab_rate = np.average(player_data['rate'], weights=player_data['g'])
     proj_ab = round(proj_games * player_ab_rate)
@@ -352,13 +262,13 @@ def player_project(data, player):
 
     player_projection = pd.DataFrame(predictions, columns=pred_col)
 
-    player_projection['pa'] = player_projection.apply(calc_pa,axis=1)
-    player_projection['obp'] = round(player_projection.apply(calc_obp,axis=1),3)
-    player_projection['slg'] = round(player_projection.apply(calc_slg,axis=1),3)
-    player_projection['ops'] = round(player_projection.apply(calc_ops,axis=1),3)
-    player_projection['t_rc'] = round(player_projection.apply(calc_trc,axis=1))
-    player_projection['b_rc'] = round(player_projection.apply(calc_brc,axis=1))
-    player_projection['s_rc'] = round(player_projection.apply(calc_sbrc,axis=1))
+    player_projection['pa'] = player_projection.apply(pa_func,axis=1)
+    player_projection['obp'] = round(player_projection.apply(obp_func,axis=1),3)
+    player_projection['slg'] = round(player_projection.apply(slg_func,axis=1),3)
+    player_projection['ops'] = round(player_projection.apply(ops_func,axis=1),3)
+    player_projection['t_rc'] = round(player_projection.apply(trc_func,axis=1))
+    player_projection['b_rc'] = round(player_projection.apply(brc_func,axis=1))
+    player_projection['s_rc'] = round(player_projection.apply(src_func,axis=1))
 
     player_projection = player_projection.astype({"year":'int64',"stint":'int64',"g":'int64', 
         "ab":'int64', "ab":'int64', "h":'int64', "r":'int64', "double":'int64',"triple":'int64', 
