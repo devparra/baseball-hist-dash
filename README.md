@@ -5,13 +5,12 @@ Using historical MLB (Major League Baseball) data, this application provides vis
 This application also provides player projections and uses a Linear Regression to evaluate player performance.
 
 ## The Analysis
-For historical analysis, this applicaiton breaks down each baseball teams win/loss performance within a range determained my MLB era (epoch).
-Additionally, this application will break down the batting performance with the team's batting average, BABIP, strikeout
-rate. The application also brakes down the piching perfomance using the teams Earned Run Average, strikeout to walk ratio, and outing distribution. 
-Finally the feilding performance of each team is illustrated with total errors and double plays. The applicaiton will similarly breakdown each teams 
-players statistics within the given era. Finally, this application provides player projections that are displayed in a datatable along side career 
-statistics while a regression analysis of the players career and recent seasons are displayed in an oscillating bar chart. Team rosters used are based on 
-the 2020 season.
+For historical analysis, this application breaks down each baseball teams win/loss performance within a range determined my MLB era (epoch). 
+Additionally, this application will break down the batting performance with the team's batting average, BABIP, strikeout rate. The application also 
+brakes down the pitching performance using the teams Earned Run Average, strikeout to walk ratio, and outing distribution. Finally the fielding 
+performance of each team is illustrated with total errors and double plays. The application will similarly breakdown each teams players statistics within 
+the given era. Finally, this application provides player projections that are displayed in a data-table along side career statistics while a regression 
+analysis of the players career and recent seasons are displayed in an oscillating bar chart. Team rosters used are based on the 2020 season.
 
 ## Dependencies
 - Python 3.8.5+
