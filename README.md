@@ -23,6 +23,4 @@ analysis of the players career and recent seasons are displayed in an oscillatin
 The data used in this application was retrieved from [Sean Lahman's Baseball Database](http://www.seanlahman.com/baseball-archive/statistics/).
 Provided by [Chadwick Baseball Bureau's GitHub](https://github.com/chadwickbureau/baseballdatabank/). 
 This database is copyright 1996-2021 by Sean Lahman. This data is licensed under a Creative Commons Attribution-ShareAlike 
-3.0 Unported License. For details see: [CreativeCommons](http://creativecommons.org/licenses/by-sa/3.0/)
-
-### Application deployed on [Heroku](https://historicalbaseball.herokuapp.com/).
+3.0 Unported License. For details see: [CreativeCommons](http://creativecommons.org/licenses/by-sa/3.0/).
