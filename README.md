@@ -9,4 +9,10 @@ Formerly the MLB History Explorer/Baseball Historical Dashboard, this applicatio
 - Pandas 1.5+
 
 ## The Data
-The data used in this application was retrieved from [Seanlahman.com](http://seanlahman.com/download-baseball-database/). Provided by [Nat Dunn's WebucatorTraining](https://github.com/WebucatorTraining/lahman-baseball-mysql). Database was updated with data provided by [Chadwick Baseball Bureau](https://github.com/chadwickbureau/baseballdatabank/). The data is copyright 1996-2023 by Sean Lahman. Licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License. For details see: [CreativeCommons v3](http://creativecommons.org/licenses/by-sa/3.0/). SQL database is licensed under the Creative Commons Zero v1.0 Universal License. For details see: [CreativeCommons v1](https://creativecommons.org/publicdomain/zero/1.0/).
+The data used in this application was retrieved from [Seanlahman.com](http://seanlahman.com/download-baseball-database/). 
+Provided by [Nat Dunn's WebucatorTraining](https://github.com/WebucatorTraining/lahman-baseball-mysql). Database was updated with 
+data provided by [Chadwick Baseball Bureau](https://github.com/chadwickbureau/baseballdatabank/). 
+The data is copyright 1996-2023 by Sean Lahman. Licensed under a Creative Commons Attribution-ShareAlike 
+3.0 Unported License. For details see: [CreativeCommons v3](http://creativecommons.org/licenses/by-sa/3.0/). 
+SQL database is licensed under the Creative Commons Zero v1.0 Universal License. 
+For details see: [CreativeCommons v1](https://creativecommons.org/publicdomain/zero/1.0/).
