@@ -22,8 +22,14 @@ from data.data import (dynamic_top, time_step, calculate_pa, calculate_trc, lag_
     Output('top-player-dropdown', 'value')],
     [Input('none', 'children')])
 def select_top_player(call):
-    # Generate 100 players for 2022 season
-    top_players = dynamic_top(2022)
+    # SQL conneciton
+    sqlite_con = sl.connect('data/lahmansbaseballdb.sqlite')
+    # Get the max year of the database
+    data = pd.read_sql_query(f'''SELECT MAX(team.yearID) as Year
+                                        FROM Teams team;''',sqlite_con)
+    sqlite_con.close()
+    # Generate 100 players
+    top_players = dynamic_top(data.Year.iloc[0])
     # Return player list
     return top_players, top_players[0]['value']
 
@@ -121,14 +127,14 @@ def update_pred_data(data, method, player):
 
     # Check method, adjust years selected based on method
     if method != 'Lag Method':
-        player_data = player_data[(player_data.yearID <= 2022)&(player_data.yearID >= 2017)]
+        player_data = player_data[(player_data.yearID <= player_data.yearID.max())&(player_data.yearID >= player_data.yearID.max()-5)]
         player_data = player_data[player_data.yearID != 2020]
         player_data.fillna(0.0, inplace=True)
         player_data.replace({None: 0.0, '': 0.0}, inplace=True)
         player_data.reset_index(drop=True,inplace=True)
         player_predictions = player_data.pipe(batter_lr)
     else:
-        player_data = player_data[(player_data.yearID <= 2022)&(player_data.yearID >= 2016)]
+        player_data = player_data[(player_data.yearID <= player_data.yearID.max())&(player_data.yearID >= player_data.yearID.max()-6)]
         player_data = player_data[player_data.yearID != 2020]
         player_data.fillna(0.0, inplace=True)
         player_data.replace({None: 0.0, '': 0.0}, inplace=True)
@@ -156,7 +162,7 @@ def update_g_regression(data, method):
     fig1 = go.Figure()
     # select method
     if method == 'Time Step':
-        player_data = player_data[(player_data.yearID >=2017)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-5)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         player_reg = player_data.pipe(reg_select[method],'G')
         # plotly express returns value error, possible due to no data available yet
@@ -170,7 +176,7 @@ def update_g_regression(data, method):
         fig1.add_trace(go.Scatter(name='Train', x=player_reg[2].index, y=player_reg[2], hovertemplate = 'Actual: %{y:.0f}<extra></extra><br>', mode='markers', marker_color='Green', opacity=0.6, marker=dict(size=8)))
         fig1.update_xaxes(title='Time Step')
     elif method == 'Lag Method':
-        player_data = player_data[(player_data.yearID >=2016)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-6)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         player_reg = player_data.pipe(reg_select[method],'G')
         try:
@@ -184,7 +190,7 @@ def update_g_regression(data, method):
     else:
         # If Correlation method selected
         # Player game are calculated rather than correlated
-        player_data = player_data[(player_data.yearID >=2017)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-5)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         # Set horizontal line to establish 50th quantile
         # fig1.add_hline(y=player_data.G.median(), line_width=2.5, line_dash="solid", line_color="Blue", opacity=0.25)
@@ -212,7 +218,7 @@ def update_pa_regression(data, method):
     fig2 = go.Figure()
     # Select method, same as above
     if method == 'Time Step':
-        player_data = player_data[(player_data.yearID >=2017)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-5)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         player_reg = player_data.pipe(reg_select[method],'PA')
         # Hack method to get plotly express to fit into a plotly object
@@ -225,7 +231,7 @@ def update_pa_regression(data, method):
         fig2.add_trace(go.Scatter(name='Train', x=player_reg[2].index, y=player_reg[2], hovertemplate = 'Actual: %{y:.0f}<extra></extra><br>', mode='markers', marker_color='Green', opacity=0.6, marker=dict(size=8)))
         fig2.update_xaxes(title='Time Step')
     elif method == 'Lag Method':
-        player_data = player_data[(player_data.yearID >=2016)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-6)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         player_reg = player_data.pipe(reg_select[method],'PA')
         try:
@@ -237,7 +243,7 @@ def update_pa_regression(data, method):
         fig2.add_trace(go.Scatter(name='Train', x=player_reg[3], y=player_reg[2], hovertemplate = 'Actual: %{y:.0f}<extra></extra><br>', mode='markers', marker_color='Green', opacity=0.6, marker=dict(size=8)))
         fig2.update_xaxes(title='Lag')
     else:
-        player_data = player_data[(player_data.yearID >=2017)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-5)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         game_est = player_data.pipe(est_games)
         player_reg = player_data.pipe(reg_select[method],'G', 'PA', game_est)
@@ -271,7 +277,7 @@ def update_trc_regression(data, method):
     fig3 = go.Figure()
     # select method
     if method == 'Time Step':
-        player_data = player_data[(player_data.yearID >=2017)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-5)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         player_reg = player_data.pipe(reg_select[method],'tRC')
         # plotly express hack
@@ -284,7 +290,7 @@ def update_trc_regression(data, method):
         fig3.add_trace(go.Scatter(name='Train', x=player_reg[2].index, y=player_reg[2], hovertemplate = 'Actual: %{y:.0f}<extra></extra><br>', mode='markers', marker_color='Green', opacity=0.6, marker=dict(size=8)))
         fig3.update_xaxes(title='Time Step')
     elif method == 'Lag Method':
-        player_data = player_data[(player_data.yearID >=2016)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-6)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         player_reg = player_data.pipe(reg_select[method],'tRC')
         try:
@@ -296,7 +302,7 @@ def update_trc_regression(data, method):
         fig3.add_trace(go.Scatter(name='Train', x=player_reg[3], y=player_reg[2], hovertemplate = 'Actual: %{y:.0f}<extra></extra><br>', mode='markers', marker_color='Green', opacity=0.6, marker=dict(size=8)))
         fig3.update_xaxes(title='Lag')
     else:
-        player_data = player_data[(player_data.yearID >=2017)&(player_data.yearID != 2020)]
+        player_data = player_data[(player_data.yearID >=player_data.yearID.max()-5)&(player_data.yearID != 2020)]
         player_data.reset_index(drop=True,inplace=True)
         game_est = player_data.pipe(est_games)
         pa_pred = player_data.pipe(reg_select[method],'G', 'PA', game_est)

@@ -16,7 +16,7 @@ teamLayout = html.Div([
     dbc.Row(dbc.Col(html.H2(style={'text-align': 'center'}, children='Team Analysis by Era'))),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px','margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''To understand the future, we often look to the past. Major League Baseball 
-        history goes back nearly 150 years, spanning and often reflecting American history. 
+        history goes back over 150 years, spanning and often reflecting American history. 
         Here the past is broken into popular Eras that represent the state of Major League 
         Baseball. Selecting from the leagues of the past as well as a team, you can view a 
         breakdown of Wins and Losses, Batting, and Pitching performances. Additionally we can 
@@ -634,7 +634,7 @@ regLayout = html.Div([
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''Below a list of 100 players is generated based on whether or not they 
-        played more than two thirds of the 2022 season, their performance over the 2022 
+        played more than two thirds of the last season, their performance over the last 
         season, and if they have played at least 7 seasons. Select from the list to evaluate 
         the player.'''))),
     # Neccesary to initiate select_top_player callback
@@ -697,9 +697,13 @@ regLayout = html.Div([
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''Each player’s 2020 season will be dropped from the analysis as an outlier 
-        season. If able, each player will have their most recent 5 seasons analyzed and a 
-        prediction rendered as well as visualizations of each area of analysis. Below is a 162 game average of the selected player. An effort to fit each batter's lifetime statistics into a single season,
-          providing an overall perspective of the players career averaged over 162 games.'''))),
+        season, however if an older database is being used this does not matter. If able, each 
+        player will have their most recent 5 seasons analyzed and a prediction rendered as well 
+        as visualizations of each area of analysis. It is worth noting that if an older database 
+        (one that does not include 2020) is being used, player projections will be based on a 6 
+        season sample of the player's statistics. Below is a 162 game average of the selected 
+        player. An effort to fit each batter's lifetime statistics into a single season, providing 
+        an overall perspective of the players career averaged over 162 games.'''))),
     html.Br(),
     # 162 game career average table
     dbc.Row(dbc.Col(
@@ -751,7 +755,7 @@ regLayout = html.Div([
         correlation of the choice statistics with which we have chosen to evaluate each player 
         by selecting the Corr Method (correlation analysis method). The linear regression 
         can be applied to each analysis method providing different yet valuable perspectives 
-        on the selected players future performance.'''))),
+        on the selected players future performance. '''))),
     # Player prediction datatable
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'font-weight': '500', 'margin': 'auto', 'width': '90%', 'opacity': '80%'}, children='Player Predictions'))),

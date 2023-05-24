@@ -7,7 +7,7 @@ import sqlite3 as sl
 
 
 # Hardcoded list of era names as key value pairs
-era_list = [{'label': 'Statcast (\'16-\'22)','value': 'Statcast'},
+era_list = [{'label': 'Statcast (\'16-PRES)','value': 'Statcast'},
             {'label': 'Post-Steroid (\'06-\'15)','value': 'Post-Steroid'},
             {'label': 'Steroid (\'94-\'05)','value': 'Steroid'},
             {'label': 'Free Agency (\'77-\'93)','value': 'Free Agency'},
@@ -383,9 +383,11 @@ def car_avg(df):
     # Apply factor
     carr = carr.apply(lambda x : round(x/fact))
     # Set Games to 162
-    carr['G'] = 162
+    carr['G'] = '162 avg.'
     # Set year
-    carr['yearID'] = 2023
+    carr['yearID'] = df.yearID.max()
+    # delete data to save memory
+    del df
     # return last row, row with career average
     return carr[-1:]
 
@@ -682,19 +684,19 @@ def batter_lr(df):
     predict_games = df.pipe(est_games)
     pa_cor_data = df.pipe(corr_method, 'G', 'PA', predict_games)
     rc_cor_data = df.pipe(corr_method, 'PA', 'tRC', pa_cor_data[0])
-    player_cor_pred = pd.DataFrame({'YearEst': 2023, 'playerName': df.playerName.unique(), 'G': predict_games, 'PA': round(pa_cor_data[0]), 'tRC': round(rc_cor_data[0])},index=[0])
+    player_cor_pred = pd.DataFrame({'YearEst': df.yearID.max()+1, 'playerName': df.playerName.unique(), 'G': predict_games, 'PA': round(pa_cor_data[0]), 'tRC': round(rc_cor_data[0])},index=[0])
     
     # time-step
     g_time_data = df.pipe(time_step,'G')
     pa_time_data = df.pipe(time_step,'PA')
     rc_time_data = df.pipe(time_step,'tRC')    
-    player_time_pred = pd.DataFrame({'YearEst': 2023, 'playerName': df.playerName.unique(), 'G': round(g_time_data[0]), 'PA': round(pa_time_data[0]), 'tRC': round(rc_time_data[0])},index=[0])
+    player_time_pred = pd.DataFrame({'YearEst': df.yearID.max()+1, 'playerName': df.playerName.unique(), 'G': round(g_time_data[0]), 'PA': round(pa_time_data[0]), 'tRC': round(rc_time_data[0])},index=[0])
     
     # lag
     g_lag_data = df.pipe(lag_method,'G')
     pa_lag_data = df.pipe(lag_method,'PA')
     rc_lag_data = df.pipe(lag_method,'tRC')
-    player_lag_pred = pd.DataFrame({'YearEst': 2023, 'playerName': df.playerName.unique(), 'G': round(g_lag_data[0]), 'PA': round(pa_lag_data[0]), 'tRC': round(rc_lag_data[0])},index=[0])
+    player_lag_pred = pd.DataFrame({'YearEst': df.yearID.max()+1, 'playerName': df.playerName.unique(), 'G': round(g_lag_data[0]), 'PA': round(pa_lag_data[0]), 'tRC': round(rc_lag_data[0])},index=[0])
     
     # delete data to save memory
     del df
