@@ -9,7 +9,8 @@ Formerly the MLB History Explorer/Baseball Historical Dashboard, this applicatio
 - Pandas 1.5+
 
 ## The Data
-The data used in this application can be retrieved from [Seanlahman.com](http://seanlahman.com/download-baseball-database/). 
+Use the data_download python file in the data folder to retrieve the SQLite database for this project.
+The data used in this application can be manually retrieved from [Seanlahman.com](http://seanlahman.com/download-baseball-database/). 
 Provided by [Nat Dunn's WebucatorTraining](https://github.com/WebucatorTraining/lahman-baseball-mysql). Database was updated with 
 data provided by [Chadwick Baseball Bureau](https://github.com/chadwickbureau/baseballdatabank/). 
 The data is copyright 1996-2023 by Sean Lahman. Licensed under a Creative Commons Attribution-ShareAlike 
