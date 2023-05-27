@@ -78,6 +78,7 @@ def render_page_content(pathname):
     if pathname == '/':
         return html.Div([dcc.Markdown('''
             ### Introduction
+            ---
             This application is a portfolio project built by [Matthew Parra](https://devparra.github.io/) using Plotly's Dash,
             faculty.ai's Dash Bootstrap Components, Pandas, and custom functions. Using historical MLB (Major League Baseball) data, 
             this application provides visualizations for team and player statistics dating from 1871 to 2022. This application also 
@@ -90,7 +91,7 @@ def render_page_content(pathname):
             3.0 Unported License. For details see: [CreativeCommons v3](http://creativecommons.org/licenses/by-sa/3.0/).
             SQL database is licensed under the Creative Commons Zero v1.0 Universal License. 
             For details see: [CreativeCommons v1](https://creativecommons.org/publicdomain/zero/1.0/).
-        ''')],className='home')
+        ''')],style={},)
     elif pathname == '/team':
         return teamLayout
     elif pathname == '/teamvteam':

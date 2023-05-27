@@ -56,7 +56,7 @@ def team_one_table(selected_team, selected_era):
     # sql connection and query
     sqlite_con = sl.connect('data/lahmansbaseballdb.sqlite')
     team_one_query = pd.read_sql_query(f'''SELECT yearID, lgID, IFNULL(team.divID, "-") as Div, IFNULL(park, "-") as park, 
-                                        IFNULL(FLOOR(attendance / Ghome), 0) as avgAtt, IFNULL(BPF, 0) as ParkFactor
+                                        IFNULL(round(attendance / Ghome), 0) as avgAtt, IFNULL(BPF, 0) as ParkFactor
                                             FROM teams team
                                         WHERE name = "{selected_team}"
                                         AND yearID >= {year_range[0]} AND yearID <= {year_range[1]};''',sqlite_con)
@@ -83,7 +83,7 @@ def team_two_table(selected_team, selected_era):
     # sql connect and query
     sqlite_con = sl.connect('data/lahmansbaseballdb.sqlite')
     team_two_query = pd.read_sql_query(f'''SELECT yearID, lgID, IFNULL(team.divID, "-") as Div, IFNULL(park, "-") as park, 
-                                        IFNULL(FLOOR(attendance / Ghome),0) as avgAtt, IFNULL(BPF, 0) as ParkFactor
+                                        IFNULL(round(attendance / Ghome),0) as avgAtt, IFNULL(BPF, 0) as ParkFactor
                                         FROM teams team
                                     WHERE name = "{selected_team}"
                                     AND yearID >= {year_range[0]} AND yearID <= {year_range[1]};''',sqlite_con)
