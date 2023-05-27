@@ -110,9 +110,10 @@ def update_player_dropdown(selected_team, year, select_pos):
 def update_profile_table(player):
     # SQL connect and query
     sqlite_con = sl.connect('data/lahmansbaseballdb.sqlite')
-    player_data = pd.read_sql_query(f'''SELECT DISTINCT player.nameFirst || ' ' || player.nameLast AS playerName, player.birth_date, player.bats, player.throws, debut
-                                FROM people player
-                                WHERE player.playerID = '{player}';''',sqlite_con)
+    player_data = pd.read_sql_query(f'''SELECT DISTINCT IFNULL((player.nameFirst || ' ' || player.nameLast), SUBSTR(player.playerID,1,LENGTH(player.playerID)-3)) playerName, 
+                                            player.birth_date, player.bats, player.throws, debut
+                                        FROM people player
+                                        WHERE player.playerID = '{player}';''',sqlite_con)
     sqlite_con.close()
     # Set empty list
     data_note = []
@@ -158,7 +159,7 @@ def update_roster_rc(selected_team, year):
                                             WHERE name = "{selected_team}"
                                                 AND yearID = {year};''',sqlite_con)
     # player roster with stats
-    roster_rc = pd.read_sql_query(f'''SELECT DISTINCT player.nameFirst || ' ' || player.nameLast AS playerName,
+    roster_rc = pd.read_sql_query(f'''SELECT DISTINCT player.nameFirst || ' ' || player.nameLast playerName,
                                         batter.AB, batter.R, batter.H, "2B" AS double, "3B" AS triple, batter.HR, batter.RBI, batter.SB, batter.CS,
                                         batter.BB, batter.SO, batter.IBB, batter.HBP, batter.SH, batter.SF, batter.GIDP
                                     FROM batting batter
@@ -209,7 +210,7 @@ def update_roster_era(selected_team, year):
                                             WHERE name = "{selected_team}"
                                                 AND yearID = {year};''',sqlite_con)
     # roster of pithcers with stats
-    player_stats = pd.read_sql_query(f'''SELECT pitcher.yearID, player.nameFirst || ' ' || player.nameLast AS playerName,
+    player_stats = pd.read_sql_query(f'''SELECT pitcher.yearID, player.nameFirst || ' ' || player.nameLast playerName,
                                             round(CAST(pitcher.SO as FLOAT) / (pitcher.BB),2) AS KBB,
                                             IFNULL(pitcher.ERA,0) as ERA
                                         FROM pitching pitcher

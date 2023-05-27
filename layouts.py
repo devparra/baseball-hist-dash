@@ -14,6 +14,7 @@ from data.data import era_list
 teamLayout = html.Div([
     # Title and page introduction
     dbc.Row(dbc.Col(html.H2(style={'text-align': 'center'}, children='Team Analysis by Era'))),
+    html.Hr(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px','margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''To understand the future, we often look to the past. Major League Baseball 
         history goes back over 150 years, spanning and often reflecting American history. 
@@ -23,6 +24,7 @@ teamLayout = html.Div([
         see a roster of players who were the most influential in the selected teams performance 
         during the preferred era.'''))),
     html.Br(),
+    html.Hr(),
     # Era list dropdown
     dbc.Row([
             dbc.Col(html.H5(style = {'text-align': 'right', 'padding-right': '1em'},children='Select Era:'),
@@ -63,6 +65,7 @@ teamLayout = html.Div([
                 lg={'size':3, 'offset':0}, xl={'size':3, 'offset':0})
 
     ]),
+    html.Hr(),
 
     html.Br(),
     dbc.Row(dbc.Col(html.H4(children='Regular Season Analysis'))),
@@ -97,9 +100,10 @@ teamLayout = html.Div([
         The number of earned runs allowed by the team per nine innings is represented by the 
         ERA. While the K/BB ratio indicates how many strikeouts the team records for each 
         walk allowed.'''))),
-    
+    html.Br(),
     html.Br(),
     dbc.Row(dbc.Col(html.H4(children='Postseason Record'))),
+    html.Hr(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''Below we have a quick look at the team's postseason journey during the 
         selected era. It should be noted that divisional play did not start until the 1995 
@@ -107,7 +111,6 @@ teamLayout = html.Div([
         was not played until 2012. The MLB League Championship series did not start until 
         1969 when the American League expanded to twelve teams. The first World Series was 
         not held until 1903, the "best-of-seven" World Series was introduced in 1905.'''))),
-    
     html.Br(),
     # team chamionship data
     dbc.Row(dbc.Col(
@@ -154,10 +157,11 @@ teamLayout = html.Div([
                 }
         ), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':12, 'offset':0}, lg={'size':12, 'offset':0},
                 xl={'size':12, 'offset':0}),justify="center"),
-
+    html.Br(),
     html.Br(),
     # Era roster of top players
     dbc.Row(dbc.Col(html.H4(children='Era Top Performers Roster'))),
+    html.Hr(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''This is a roster of top players who were the most noteworthy in the 
         selected teams performance during the preferred era. All players are evaluated for 
@@ -172,7 +176,9 @@ teamLayout = html.Div([
         K/BB (Strikeout-to-Walk Ratio). Some positions may be missing due to players 
         who played multiple positions.'''))),
     html.Br(),
+    html.Br(),
     dbc.Row(dbc.Col(html.H4(children="Position Players"))),
+    html.Br(),
     dbc.Row(dbc.Col(
         dash_table.DataTable(
             id='era-roster',
@@ -193,9 +199,10 @@ teamLayout = html.Div([
                 }),
             xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':10, 'offset':0}, lg={'size':10, 'offset':0},
             xl={'size':10, 'offset':0}),justify="center"),
-    
+    html.Br(),
     html.Br(),
     dbc.Row(dbc.Col(html.H4(children="Starting Pitchers"))),
+    html.Br(),
     dbc.Row(dbc.Col(
         dash_table.DataTable(
             id='era-starters',
@@ -216,9 +223,10 @@ teamLayout = html.Div([
                 }),
             xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':10, 'offset':0}, lg={'size':10, 'offset':0},
             xl={'size':10, 'offset':0}),justify="center"),
-    
+    html.Br(),
     html.Br(),
     dbc.Row(dbc.Col(html.H4(children="Relief Pitchers"))),
+    html.Br(),
     dbc.Row(dbc.Col(
         dash_table.DataTable(
             id='era-relief',
@@ -247,11 +255,13 @@ teamLayout = html.Div([
 rosterLayout = html.Div([
     # Title and description
     dbc.Row(dbc.Col(html.H2(style={'text-align': 'center'}, children='Roster Analysis'))),
+    html.Hr(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px','margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''To understand the success of any team, we need to look at how that team 
         is constructed. This page gives us a look at the selected teams roster and how the 
         players influenced the team and the selected session during the chosen era.'''))),
     html.Br(),
+    html.Hr(),
     # Era Dropdown
     dbc.Row([
         dbc.Col(html.H5(style = {'text-align': 'right', 'padding-right': '1em'},children='Select Era:'),
@@ -301,6 +311,7 @@ rosterLayout = html.Div([
             ), xs={'size':3, 'offset':0}, sm={'size':3, 'offset':0}, md={'size':3, 'offset':0},
             lg={'size':3, 'offset':0}, xl={'size':3, 'offset':0})
     ]),
+    html.Hr(),
 
     # GRAPH FOR DISTROBUTION OF RUNS CREATED
     dbc.Row(dbc.Col(dcc.Graph(id='roster-rc-dist', config={'displayModeBar': False}), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size': 12, 'offset': 0},lg={'size': 12, 'offset': 0})),
@@ -325,6 +336,7 @@ rosterLayout = html.Div([
     
     # SELECT POSITION
     html.Br(),
+    html.Hr(),
     dbc.Row([
         dbc.Col(html.H5(style={'text-align': 'right', 'padding-right': '1em'}, children='Select Player:'), xs={'size':5, 'offset':0}, sm={'size':5, 'offset':0}, md={'size':5, 'offset':0},
             lg={'size':5, 'offset':0}, xl={'size':5, 'offset':0}),
@@ -346,6 +358,7 @@ rosterLayout = html.Div([
             ), xs={'size':3, 'offset':0}, sm={'size':3, 'offset':0}, md={'size':3, 'offset':0},
             lg={'size':3, 'offset':0}, xl={'size':3, 'offset':0})
     ]),
+    html.Hr(),
 
     #Player datatable
     html.Br(),
@@ -415,6 +428,7 @@ rosterLayout = html.Div([
 teamVLayout = html.Div([
     # Title and description
     dbc.Row(dbc.Col(html.H2(style={'text-align': 'center'}, children='Team Vs Team Analysis'))),
+    html.Hr(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px','margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''The rivalry is rooted in the long history of baseball, from New York 
         versus Boston to Los Angeles versus San Francisco, these feuds fill each team's stands 
@@ -424,6 +438,7 @@ teamVLayout = html.Div([
         around the leagues.'''))),
     html.Br(),
     # Era Dropdown
+    html.Hr(),
     dbc.Row([
             dbc.Col(html.H5(style = {'text-align': 'right', 'padding-right': '1em'},children='Select Era:'),
                 xs={'size':5, 'offset':0}, sm={'size':5, 'offset':0}, md={'size':5, 'offset':0},
@@ -488,6 +503,7 @@ teamVLayout = html.Div([
                 lg={'size':3, 'offset':0}, xl={'size':3, 'offset':0})
 
     ]),
+    html.Hr(),
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px','margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''Below is a brief look at each teams postseason title count along with a 
@@ -620,6 +636,7 @@ teamVLayout = html.Div([
 regLayout = html.Div([
     # Title and description
     dbc.Row(dbc.Col(html.H2(style={'text-align': 'center'}, children='Regression Analysis'))),
+    html.Hr(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''For any team it is important not only to know where you have been but also 
         where you are going. Evaluating individual players' statistics can provide an idea as 
@@ -635,10 +652,12 @@ regLayout = html.Div([
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''Below a list of 100 players is generated based on whether or not they 
         played more than two thirds of the last season, their performance over the last 
-        season, and if they have played at least 7 seasons. Select from the list to evaluate 
-        the player.'''))),
+        season, and if they have played at least 7 seasons. The list is generated from the most 
+        recent data available in the database, some players may no longer be active. 
+        Select from the list to evaluate.'''))),
     # Neccesary to initiate select_top_player callback
     html.P(id='none'),
+    html.Hr(),
     # Top players dropdown
     dbc.Row([
         dbc.Col(html.H5(style={'text-align': 'right', 'padding-right': '1em'}, children='Select Player:'), xs={'size':5, 'offset':0}, sm={'size':5, 'offset':0}, md={'size':5, 'offset':0},
@@ -650,6 +669,7 @@ regLayout = html.Div([
             ), xs={'size':3, 'offset':0}, sm={'size':3, 'offset':0}, md={'size':3, 'offset':0},
             lg={'size':3, 'offset':0}, xl={'size':3, 'offset':0})
     ]),
+    html.Hr(),
     # player datatable
     html.Br(),
     dbc.Row(dbc.Col(
@@ -697,11 +717,8 @@ regLayout = html.Div([
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
         children='''Each player’s 2020 season will be dropped from the analysis as an outlier 
-        season, however if an older database is being used this does not matter. If able, each 
-        player will have their most recent 5 seasons analyzed and a prediction rendered as well 
-        as visualizations of each area of analysis. It is worth noting that if an older database 
-        (one that does not include 2020) is being used, player projections will be based on a 6 
-        season sample of the player's statistics. Below is a 162 game average of the selected 
+        season. Each player will have 5 seasons analyzed and a prediction rendered as well as 
+        visualizations of each area of analysis. Below is a 162 game average of the selected 
         player. An effort to fit each batter's lifetime statistics into a single season, providing 
         an overall perspective of the players career averaged over 162 games.'''))),
     html.Br(),
@@ -727,9 +744,9 @@ regLayout = html.Div([
         ), xs={'size':12, 'offset':0}, sm={'size':12, 'offset':0}, md={'size':10, 'offset':0}, lg={'size':10, 'offset':0},
                 xl={'size':10, 'offset':0}),justify="center"),
     html.Br(),
-    dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
-        children='''Select a regression method below to determine how a player will be evaluated.'''))),
-    html.Br(),
+    # dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
+    #     children=''''''))),
+    html.Hr(),
     # Regression selection dropdown
     dbc.Row([
         dbc.Col(html.H5(style={'text-align': 'right', 'padding-right': '1em'}, children='Regression Method:'),
@@ -743,19 +760,20 @@ regLayout = html.Div([
             clearable=False),
             xs={'size':3, 'offset':0}, sm={'size':3, 'offset':0}, md={'size':3, 'offset':0},
             lg={'size':3, 'offset':0}, xl={'size':3, 'offset':0})
-    ]),   
+    ]),
+    html.Hr(),
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'margin': 'auto', 'width': '90%', 'opacity': '70%'},
-        children='''By default Time Step analysis is selected, for this we created a time-step 
-        feature that can be calculated directly from the time index. The time dummy is the most 
-        fundamental time-step feature, ticking off time steps in a series from start to finish. 
-        Next we can select a Time Lag analysis, the lag is used to move the observations in 
-        the target series so that they appear to have occurred later in time. For our purpose, 
-        we've added a 1-step lag feature. Finally we can analyze players based on the 
-        correlation of the choice statistics with which we have chosen to evaluate each player 
-        by selecting the Corr Method (correlation analysis method). The linear regression 
-        can be applied to each analysis method providing different yet valuable perspectives 
-        on the selected players future performance. '''))),
+        children='''Select a regression method above to determine how a player will be evaluated.
+        By default Time Step analysis is selected, for this we created a time-step feature that 
+        can be calculated directly from the time index. The time dummy is the most fundamental 
+        time-step feature, ticking off time steps in a series from start to finish. Next we can 
+        select a Time Lag analysis, the lag is used to move the observations in the target series 
+        so that they appear to have occurred later in time. For our purpose, we've added a 1-step 
+        lag feature. Finally we can analyze players based on the correlation of the choice 
+        statistics with which we have chosen to evaluate each player by selecting the Corr Method 
+        (correlation analysis method). The linear regression can be applied to each analysis 
+        method providing different yet valuable perspectives on the selected players future performance. '''))),
     # Player prediction datatable
     html.Br(),
     dbc.Row(dbc.Col(html.P(style={'font-size': '16px', 'font-weight': '500', 'margin': 'auto', 'width': '90%', 'opacity': '80%'}, children='Player Predictions'))),
