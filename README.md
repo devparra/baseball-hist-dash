@@ -10,7 +10,7 @@ Formerly the MLB History Explorer/Baseball Historical Dashboard, this applicatio
 - Statsmodels 0.15+
 
 ## The Data
-Use the data_download python file in the data folder to retrieve the SQLite database for this project.
+### Run the data_download python file in the data folder to retrieve the SQLite database for this project.
 The data used in this application can be manually retrieved from [Seanlahman.com](http://seanlahman.com/download-baseball-database/). 
 Provided by [Nat Dunn's WebucatorTraining](https://github.com/WebucatorTraining/lahman-baseball-mysql). Database was updated with 
 data provided by [Chadwick Baseball Bureau](https://github.com/chadwickbureau/baseballdatabank/). 
